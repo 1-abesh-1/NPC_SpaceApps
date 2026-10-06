@@ -1,0 +1,24 @@
+{
+  "iso": "ARG",
+  "name": "Argentina",
+  "bbox": [
+    -73.25,
+    -55.0,
+    -53.5,
+    -21.75
+  ],
+  "k": 0.479,
+  "k_source": "measured",
+  "r": 0.99,
+  "gaps": {
+    "daily": 0.282,
+    "weekly": 0.159,
+    "monthly": 0.137
+  },
+  "quiet_ratio": 2.71,
+  "busy_ratio": 2.0,
+  "first_year": 2003,
+  "last_year": 2026,
+  "total_footprints": 1427342,
+  "status": "ready"
+}

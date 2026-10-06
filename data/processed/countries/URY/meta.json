@@ -1,0 +1,24 @@
+{
+  "iso": "URY",
+  "name": "Uruguay",
+  "bbox": [
+    -58.5,
+    -35.0,
+    -53.0,
+    -30.0
+  ],
+  "k": 0.463,
+  "k_source": "measured",
+  "r": 0.922,
+  "gaps": {
+    "daily": 0.595,
+    "weekly": 0.389,
+    "monthly": 0.324
+  },
+  "quiet_ratio": 3.75,
+  "busy_ratio": 2.16,
+  "first_year": 2003,
+  "last_year": 2024,
+  "total_footprints": 25694,
+  "status": "ready"
+}

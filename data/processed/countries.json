@@ -1,0 +1,146 @@
+[
+  {
+    "iso": "ARG",
+    "name": "Argentina",
+    "bbox": [
+      -73.25,
+      -55.0,
+      -53.5,
+      -21.75
+    ],
+    "k": 0.479,
+    "k_source": "measured",
+    "r": 0.99,
+    "gaps": {
+      "daily": 0.282,
+      "weekly": 0.159,
+      "monthly": 0.137
+    },
+    "quiet_ratio": 2.71,
+    "busy_ratio": 2.0,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1427342,
+    "status": "ready"
+  },
+  {
+    "iso": "AUS",
+    "name": "Australia",
+    "bbox": [
+      113.0,
+      -43.75,
+      153.75,
+      -9.0
+    ],
+    "k": 0.43,
+    "k_source": "measured",
+    "r": 0.984,
+    "gaps": {
+      "daily": 0.159,
+      "weekly": 0.109,
+      "monthly": 0.103
+    },
+    "quiet_ratio": 2.58,
+    "busy_ratio": 2.14,
+    "first_year": 2003,
+    "last_year": 2024,
+    "total_footprints": 4790013,
+    "status": "ready"
+  },
+  {
+    "iso": "BRA",
+    "name": "Brazil",
+    "bbox": [
+      -74.0,
+      -33.75,
+      -32.25,
+      5.25
+    ],
+    "k": 0.415,
+    "k_source": "measured",
+    "r": 0.988,
+    "gaps": {
+      "daily": 0.197,
+      "weekly": 0.117,
+      "monthly": 0.1
+    },
+    "quiet_ratio": 2.45,
+    "busy_ratio": 2.35,
+    "first_year": 2003,
+    "last_year": 2024,
+    "total_footprints": 7692451,
+    "status": "ready"
+  },
+  {
+    "iso": "CHL",
+    "name": "Chile",
+    "bbox": [
+      -109.5,
+      -54.0,
+      -67.0,
+      -17.5
+    ],
+    "k": 0.473,
+    "k_source": "measured",
+    "r": 0.971,
+    "gaps": {
+      "daily": 0.467,
+      "weekly": 0.243,
+      "monthly": 0.192
+    },
+    "quiet_ratio": 3.39,
+    "busy_ratio": 2.09,
+    "first_year": 2003,
+    "last_year": 2024,
+    "total_footprints": 148784,
+    "status": "ready"
+  },
+  {
+    "iso": "PRY",
+    "name": "Paraguay",
+    "bbox": [
+      -62.75,
+      -27.75,
+      -54.25,
+      -19.25
+    ],
+    "k": 0.495,
+    "k_source": "measured",
+    "r": 0.991,
+    "gaps": {
+      "daily": 0.307,
+      "weekly": 0.135,
+      "monthly": 0.094
+    },
+    "quiet_ratio": 2.32,
+    "busy_ratio": 1.92,
+    "first_year": 2003,
+    "last_year": 2024,
+    "total_footprints": 839622,
+    "status": "ready"
+  },
+  {
+    "iso": "URY",
+    "name": "Uruguay",
+    "bbox": [
+      -58.5,
+      -35.0,
+      -53.0,
+      -30.0
+    ],
+    "k": 0.463,
+    "k_source": "measured",
+    "r": 0.922,
+    "gaps": {
+      "daily": 0.595,
+      "weekly": 0.389,
+      "monthly": 0.324
+    },
+    "quiet_ratio": 3.75,
+    "busy_ratio": 2.16,
+    "first_year": 2003,
+    "last_year": 2024,
+    "total_footprints": 25694,
+    "status": "ready"
+  }
+]

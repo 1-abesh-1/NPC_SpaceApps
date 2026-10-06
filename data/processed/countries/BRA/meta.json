@@ -1,0 +1,24 @@
+{
+  "iso": "BRA",
+  "name": "Brazil",
+  "bbox": [
+    -74.0,
+    -33.75,
+    -32.25,
+    5.25
+  ],
+  "k": 0.415,
+  "k_source": "measured",
+  "r": 0.988,
+  "gaps": {
+    "daily": 0.197,
+    "weekly": 0.117,
+    "monthly": 0.1
+  },
+  "quiet_ratio": 2.45,
+  "busy_ratio": 2.35,
+  "first_year": 2003,
+  "last_year": 2024,
+  "total_footprints": 7692451,
+  "status": "ready"
+}

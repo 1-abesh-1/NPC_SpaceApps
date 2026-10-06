@@ -1,0 +1,24 @@
+{
+  "iso": "AUS",
+  "name": "Australia",
+  "bbox": [
+    113.0,
+    -43.75,
+    153.75,
+    -9.0
+  ],
+  "k": 0.43,
+  "k_source": "measured",
+  "r": 0.984,
+  "gaps": {
+    "daily": 0.159,
+    "weekly": 0.109,
+    "monthly": 0.103
+  },
+  "quiet_ratio": 2.58,
+  "busy_ratio": 2.14,
+  "first_year": 2003,
+  "last_year": 2024,
+  "total_footprints": 4790013,
+  "status": "ready"
+}
