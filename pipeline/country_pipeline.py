@@ -253,11 +253,12 @@ def harmonize_grid(gm: pd.DataFrame, gv: pd.DataFrame, k: float) -> pd.DataFrame
     return harmonized
 
 
-def process_country(iso: str):
+def process_country(iso: str, country_file: str = None, country_name: str = None):
     """Run full extraction, calibration, harmonization, and persistence for one country."""
-    cfg = COUNTRY_CONFIG.get(iso, {"file": iso, "name": iso})
-    country_file = cfg["file"]
-    country_name = cfg["name"]
+    if not country_file or not country_name:
+        cfg = COUNTRY_CONFIG.get(iso, {"file": iso, "name": iso})
+        country_file = cfg["file"]
+        country_name = cfg["name"]
     print(f"\n==================================================")
     print(f"Processing {country_name} ({iso})...")
     print(f"==================================================")

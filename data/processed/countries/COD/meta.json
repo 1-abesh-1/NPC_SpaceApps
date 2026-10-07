@@ -1,0 +1,24 @@
+{
+  "iso": "COD",
+  "name": "DR Congo",
+  "bbox": [
+    12.0,
+    -13.5,
+    31.5,
+    5.5
+  ],
+  "k": 0.36,
+  "k_source": "measured",
+  "r": 0.977,
+  "gaps": {
+    "daily": 0.419,
+    "weekly": 0.171,
+    "monthly": 0.153
+  },
+  "quiet_ratio": 4.06,
+  "busy_ratio": 2.56,
+  "first_year": 2003,
+  "last_year": 2024,
+  "total_footprints": 9035351,
+  "status": "ready"
+}
