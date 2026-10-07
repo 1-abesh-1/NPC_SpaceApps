@@ -901,13 +901,14 @@ button {
 }
 
 .heat-blob.anomaly-2 {
-  opacity: 0.94;
+  opacity: 0.98;
+  filter: drop-shadow(0 0 5px #ff3d00);
 }
 
 .critical-heat-wash {
-  animation: heat-breathe 2.4s ease-in-out infinite;
-  fill: var(--data-4);
-  opacity: 0.045;
+  animation: heat-breathe 2s ease-in-out infinite;
+  fill: #ff3b30;
+  opacity: 0.22;
 }
 
 .region-point {
@@ -954,16 +955,127 @@ button {
 .aoi-fill {
   cursor: move;
   fill: var(--data-3);
-  opacity: 0.08;
+  opacity: 0.16;
+  transition: fill 200ms, opacity 200ms;
+}
+
+.aoi-fill[data-anomaly="critical"] {
+  fill: #ff3b30;
+  opacity: 0.32;
+}
+
+.aoi-fill[data-anomaly="elevated"] {
+  fill: #ff9500;
+  opacity: 0.22;
 }
 
 .aoi-outline {
   cursor: move;
   fill: none;
   stroke: var(--data-4);
-  stroke-dasharray: 2.5 2;
-  stroke-width: 0.6;
+  stroke-dasharray: 4 2;
+  stroke-width: 1.4;
   vector-effect: non-scaling-stroke;
+  transition: stroke 200ms, stroke-width 200ms;
+}
+
+.aoi-outline[data-anomaly="critical"] {
+  stroke: #ff3b30;
+  stroke-width: 2.2;
+  stroke-dasharray: none;
+  filter: drop-shadow(0 0 6px rgba(255, 59, 48, 0.9));
+}
+
+.aoi-outline[data-anomaly="elevated"] {
+  stroke: #ff9500;
+  stroke-width: 1.8;
+  stroke-dasharray: 3 1.5;
+}
+
+.aoi-fill:hover {
+  opacity: 0.4 !important;
+}
+
+.aoi-outline:hover {
+  stroke-width: 2.5 !important;
+}
+
+/* Early Warning Alert Banner */
+.early-warning-banner {
+  align-items: center;
+  border-radius: 6px;
+  display: flex;
+  gap: 12px;
+  margin: 10px 0 14px;
+  padding: 10px 14px;
+  transition: background 250ms, border-color 250ms, box-shadow 250ms;
+}
+
+.early-warning-banner.anomaly-2 {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.32), rgba(185, 28, 28, 0.16));
+  border: 1.5px solid #ef4444;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.4), inset 0 0 8px rgba(239, 68, 68, 0.2);
+}
+
+.early-warning-banner.anomaly-1 {
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.24), rgba(180, 83, 9, 0.12));
+  border: 1.5px solid #f59e0b;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+}
+
+.early-warning-banner.anomaly-0 {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(5, 150, 105, 0.08));
+  border: 1px solid rgba(16, 185, 129, 0.45);
+}
+
+.warning-banner-icon {
+  font-size: 22px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.warning-banner-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.warning-banner-title {
+  font-family: "Jura", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+}
+
+.early-warning-banner.anomaly-2 .warning-banner-title {
+  color: #fecaca;
+}
+
+.early-warning-banner.anomaly-1 .warning-banner-title {
+  color: #fef3c7;
+}
+
+.early-warning-banner.anomaly-0 .warning-banner-title {
+  color: #a7f3d0;
+}
+
+.warning-banner-desc {
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--strata-ink-soft);
+}
+
+.early-warning-banner.anomaly-2 .warning-banner-desc {
+  color: #fca5a5;
+  font-weight: 500;
+}
+
+.year-selector-pill {
+  align-items: center;
+  border-right: 1px solid var(--strata-line-strong);
+  display: flex;
+  padding: 0 10px 0 4px;
 }
 
 .aoi-handle {
@@ -1267,6 +1379,24 @@ button {
   font-size: 13px;
   font-weight: 400;
   margin: 3px 0;
+}
+
+.aoi-hover-card[data-anomaly="critical"] {
+  border-color: #ef4444;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.45);
+}
+
+.aoi-hover-card[data-anomaly="critical"] strong {
+  color: #ff3b30;
+  font-weight: 600;
+}
+
+.aoi-hover-card[data-anomaly="elevated"] {
+  border-color: #f59e0b;
+}
+
+.aoi-hover-card[data-anomaly="elevated"] strong {
+  color: #f59e0b;
 }
 
 .dialog-backdrop {

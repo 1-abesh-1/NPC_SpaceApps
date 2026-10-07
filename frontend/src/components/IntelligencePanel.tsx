@@ -140,6 +140,30 @@ export default function IntelligencePanel({
           </label>
           <span className="taxonomy-badge">{country.code} / LAND AREA</span>
         </div>
+
+        {/* High-Visibility Early Warning Banner */}
+        <div className={`early-warning-banner anomaly-${anomalyLevel}`}>
+          <div className="warning-banner-icon">
+            {anomalyLevel === 2 ? "🚨" : anomalyLevel === 1 ? "⚠️" : "🟢"}
+          </div>
+          <div className="warning-banner-content">
+            <div className="warning-banner-title">
+              {anomalyLevel === 2
+                ? "CRITICAL FIRE ANOMALY ACTIVE"
+                : anomalyLevel === 1
+                  ? "ELEVATED FIRE ACTIVITY DETECTED"
+                  : "NORMAL SEASONAL BASELINE"}
+            </div>
+            <div className="warning-banner-desc">
+              {anomalyLevel === 2
+                ? `Observations are ${active.zScore >= 0 ? "+" : ""}${active.zScore.toFixed(1)}σ above 20-year baseline — extreme wildfire emergency!`
+                : anomalyLevel === 1
+                  ? `Activity is ${active.zScore >= 0 ? "+" : ""}${active.zScore.toFixed(1)}σ above normal seasonal expectations.`
+                  : `Fire count is within historical 20-year baseline bounds (${active.zScore >= 0 ? "+" : ""}${active.zScore.toFixed(1)}σ).`}
+            </div>
+          </div>
+        </div>
+
         <div className="hero-kpi">
           <strong>{formatNumber(animatedCount)}</strong>
           <span>harmonized daily detections</span>

@@ -5,6 +5,8 @@ import type { DailyRecord, Horizon } from "../types"
 type Props = {
   rows: DailyRecord[][]
   horizon: Horizon
+  selectedYear?: number
+  onSelectYear?: (year: number, day?: number) => void
 }
 
 const colors = [
@@ -15,7 +17,12 @@ const colors = [
   "var(--data-4)",
 ]
 
-export default function HistoricalCalendar({ rows, horizon }: Props) {
+export default function HistoricalCalendar({
+  rows,
+  horizon,
+  selectedYear,
+  onSelectYear,
+}: Props) {
   const [selected, setSelected] = useState<DailyRecord | null>(null)
   const reversed = useMemo(() => [...rows].reverse(), [rows])
 
@@ -40,6 +47,8 @@ export default function HistoricalCalendar({ rows, horizon }: Props) {
       </div>
       <div className="compact-calendar">
         {reversed.map((row) => {
+          const yr = row[0].year
+          const isSelected = yr === selectedYear
           const gradient = row
             .map(
               (record, index) =>
@@ -48,18 +57,24 @@ export default function HistoricalCalendar({ rows, horizon }: Props) {
             .join(",")
           return (
             <button
-              className="calendar-line"
-              key={row[0].year}
+              className={`calendar-line ${isSelected ? "selected-year-row" : ""}`}
+              data-selected={isSelected}
+              key={yr}
               onClick={() => {
                 const strongest = row.reduce((best, record) =>
                   record.zScore > best.zScore ? record : best,
                 )
                 setSelected(strongest)
+                onSelectYear?.(yr, strongest.day)
               }}
-              style={{ background: `linear-gradient(90deg, ${gradient})` }}
+              style={{
+                background: `linear-gradient(90deg, ${gradient})`,
+                outline: isSelected ? "2px solid #ef4444" : undefined,
+                boxShadow: isSelected ? "0 0 8px rgba(239, 68, 68, 0.6)" : undefined,
+              }}
               type="button"
             >
-              <span>{row[0].year}</span>
+              <span>{yr}</span>
             </button>
           )
         })}

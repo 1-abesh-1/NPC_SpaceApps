@@ -16,9 +16,11 @@ type Props = {
   bounds: Bounds
   horizon: Horizon
   day: number
+  year: number
   onCountry: (country: CountryProfile) => void
   onBounds: (bounds: Bounds, preset?: string, multiplier?: number) => void
   onDay: (day: number) => void
+  onYear: (year: number) => void
   onHorizon: (horizon: Horizon) => void
 }
 
@@ -61,9 +63,11 @@ export default function AoiMap({
   bounds,
   horizon,
   day,
+  year,
   onCountry,
   onBounds,
   onDay,
+  onYear,
   onHorizon,
 }: Props) {
   const groupRef = useRef<SVGGElement>(null)
@@ -99,10 +103,11 @@ export default function AoiMap({
   const fireMarks = useMemo(
     () =>
       Array.from({ length: 28 }, (_, index) => {
-        const xSeed = Math.sin((index + 1) * 12.9898 + day * 0.173) * 43758.5453
-        const ySeed = Math.sin((index + 1) * 78.233 + day * 0.097) * 12345.6789
+        const timeSeed = year * 365 + day
+        const xSeed = Math.sin((index + 1) * 12.9898 + timeSeed * 0.173) * 43758.5453
+        const ySeed = Math.sin((index + 1) * 78.233 + timeSeed * 0.097) * 12345.6789
         const intensity =
-          Math.sin((index + 1) * 4.127 + day * 0.041) * 0.5 + 0.5
+          Math.sin((index + 1) * 4.127 + timeSeed * 0.041) * 0.5 + 0.5
         const anomalyBand = anomaly >= 2 ? 2 : anomaly >= 1 ? 1 : 0
         const localAnomaly =
           anomalyBand === 2
@@ -125,7 +130,7 @@ export default function AoiMap({
             (0.72 + intensity * 0.72),
         }
       }),
-    [anomaly, box, day],
+    [anomaly, box, day, year],
   )
 
   const transformFor = (next: View) =>
@@ -383,15 +388,17 @@ export default function AoiMap({
             />
           </radialGradient>
           <radialGradient id="heat-elevated">
-            <stop offset="0" stopColor="#d8756d" stopOpacity="0.68" />
-            <stop offset="0.52" stopColor="#c96a62" stopOpacity="0.28" />
-            <stop offset="1" stopColor="#c96a62" stopOpacity="0" />
+            <stop offset="0%" stopColor="#fff3d1" stopOpacity="1" />
+            <stop offset="35%" stopColor="#ffb300" stopOpacity="0.9" />
+            <stop offset="70%" stopColor="#ff5722" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#ff5722" stopOpacity="0" />
           </radialGradient>
           <radialGradient id="heat-critical">
-            <stop offset="0" stopColor="#ff3b2f" stopOpacity="0.94" />
-            <stop offset="0.35" stopColor="#d6342a" stopOpacity="0.72" />
-            <stop offset="0.7" stopColor="#d6342a" stopOpacity="0.26" />
-            <stop offset="1" stopColor="#d6342a" stopOpacity="0" />
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+            <stop offset="25%" stopColor="#fff176" stopOpacity="0.95" />
+            <stop offset="55%" stopColor="#ff3d00" stopOpacity="0.88" />
+            <stop offset="85%" stopColor="#b71c1c" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#b71c1c" stopOpacity="0" />
           </radialGradient>
           <filter height="180%" id="heat-soften" width="180%" x="-40%" y="-40%">
             <feGaussianBlur stdDeviation="3.8" />
@@ -425,7 +432,7 @@ export default function AoiMap({
                       ? "heat-elevated"
                       : "heat-neutral"
                 })`}
-                key={`${day}-${index}`}
+                key={`${year}-${day}-${index}`}
                 r={mark.radius}
               />
             ))}
@@ -441,6 +448,7 @@ export default function AoiMap({
           </g>
           <rect
             className="aoi-fill"
+            data-anomaly={anomaly >= 2 ? "critical" : anomaly >= 1 ? "elevated" : "normal"}
             data-aoi="true"
             height={box.height}
             onMouseEnter={() => setBoxHovered(true)}
@@ -452,6 +460,7 @@ export default function AoiMap({
           />
           <rect
             className="aoi-outline"
+            data-anomaly={anomaly >= 2 ? "critical" : anomaly >= 1 ? "elevated" : "normal"}
             data-aoi="true"
             height={box.height}
             onMouseEnter={() => setBoxHovered(true)}
@@ -557,8 +566,32 @@ export default function AoiMap({
         <div className="observation-date">
           <span>Observation date</span>
           <strong>
-            {dayToDate(day)} / DOY {String(day).padStart(3, "0")}
+            {dayToDate(day, year)} {year} · DOY {String(day).padStart(3, "0")}
           </strong>
+        </div>
+        <div className="year-selector-pill">
+          <label htmlFor="map-year-select" style={{ fontSize: "9px", textTransform: "uppercase", color: "var(--chip-color)", marginRight: "5px" }}>Year</label>
+          <select
+            id="map-year-select"
+            value={year}
+            onChange={(e) => onYear(Number(e.target.value))}
+            style={{
+              background: "#1c1c1c",
+              color: "#fff",
+              border: "1px solid var(--strata-line-strong)",
+              borderRadius: "4px",
+              padding: "3px 8px",
+              fontWeight: 600,
+              fontSize: "12px",
+              cursor: "pointer",
+            }}
+          >
+            {Array.from({ length: 24 }, (_, i) => 2026 - i).map((y) => (
+              <option key={y} value={y} style={{ background: "#111", color: "#fff" }}>
+                {y}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="compact-segment">
           {([5, 10, 23] as Horizon[]).map((value) => (
@@ -664,6 +697,7 @@ export default function AoiMap({
         className={`aoi-hover-card strata-chrome ${
           boxHovered ? "visible" : ""
         }`}
+        data-anomaly={anomaly >= 2 ? "critical" : anomaly >= 1 ? "elevated" : "normal"}
       >
         <span>
           {included.length > 1
@@ -671,12 +705,14 @@ export default function AoiMap({
             : `${included[0]?.name ?? country.name} / selected footprint`}
         </span>
         <strong>
-          {bounds.south.toFixed(1)}° to {bounds.north.toFixed(1)}°
+          {anomaly >= 2
+            ? `Critical Anomaly (+${anomaly.toFixed(1)}σ)`
+            : anomaly >= 1
+              ? `Elevated Fire (+${anomaly.toFixed(1)}σ)`
+              : `Normal Baseline (${anomaly >= 0 ? "+" : ""}${anomaly.toFixed(1)}σ)`}
         </strong>
         <small>
-          {included.length > 1
-            ? `${included.length} country records combined`
-            : "Drag to move · use corners to resize"}
+          {year} · DOY {String(day).padStart(3, "0")} · {bounds.south.toFixed(1)}° to {bounds.north.toFixed(1)}°
         </small>
       </div>
 

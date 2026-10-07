@@ -18,6 +18,7 @@ export default function App() {
   const [country, setCountry] = useState<CountryProfile>(countries[0])
   const [horizon, setHorizon] = useState<Horizon>(23)
   const [day, setDay] = useState(258)
+  const [year, setYear] = useState<number>(2024)
   const [theme, setTheme] = useState<ThemeId>(() =>
     localStorage.getItem("firecalendar-theme") === "paper" ? "paper" : "ember",
   )
@@ -83,21 +84,21 @@ export default function App() {
 
   // Use real backend data if loaded, otherwise fallback to local generator
   const data = useMemo(() => {
-    if (backendData && backendData.current.length >= 365) {
-      const metricDay =
-        backendData.current[Math.min(365, Math.max(1, day)) - 1] ||
-        backendData.current.reduce((best, r) => (r.zScore > best.zScore ? r : best), backendData.current[0])
-      return {
-        ...backendData,
-        metricDay,
-      }
-    }
-    const generated = generateAreaDashboardData(activeCountry, bounds, aoiMultiplier)
+    const source = (backendData && backendData.current.length >= 365)
+      ? backendData
+      : generateAreaDashboardData(activeCountry, bounds, aoiMultiplier)
+
+    // Find the row for the selected year
+    const yearRow = source.rows.find((r) => r[0].year === year) || source.current
+    const safeDay = Math.min(365, Math.max(1, day))
+    const metricDay = yearRow[safeDay - 1] || yearRow[0]
+
     return {
-      ...generated,
-      metricDay: generated.current[day - 1],
+      ...source,
+      current: yearRow,
+      metricDay,
     }
-  }, [backendData, activeCountry, bounds, aoiMultiplier, day])
+  }, [backendData, activeCountry, bounds, aoiMultiplier, year, day])
 
   const visibleRows = useMemo(
     () => rowsForHorizon(data, horizon),
@@ -124,6 +125,11 @@ export default function App() {
     setAoiMultiplier(preset.multiplier)
   }
 
+  const handleYearSelect = (newYear: number, newDay?: number) => {
+    setYear(newYear)
+    if (newDay) setDay(newDay)
+  }
+
   return (
     <div className="app-shell" data-theme={theme}>
       <a className="skip-link" href="#analysis-panel">
@@ -139,7 +145,12 @@ export default function App() {
             onIntegrity={() => setCalibrationOpen(true)}
             onPreset={handlePreset}
           />
-          <HistoricalCalendar horizon={horizon} rows={visibleRows} />
+          <HistoricalCalendar
+            horizon={horizon}
+            rows={visibleRows}
+            selectedYear={year}
+            onSelectYear={handleYearSelect}
+          />
         </aside>
         <div
           aria-label="Resize analysis panel"
@@ -180,10 +191,12 @@ export default function App() {
             bounds={bounds}
             country={activeCountry}
             day={day}
+            year={year}
             horizon={horizon}
             onBounds={handleBounds}
             onCountry={handleCountry}
             onDay={setDay}
+            onYear={setYear}
             onHorizon={setHorizon}
           />
         </div>
