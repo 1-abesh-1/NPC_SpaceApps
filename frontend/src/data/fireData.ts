@@ -15,6 +15,11 @@ export const countries: CountryProfile[] = [
     bounds: { north: -21.8, south: -55.1, west: -73.6, east: -53.6 },
     presets: [
       {
+        name: "National",
+        bounds: { north: -21.8, south: -55.1, west: -73.6, east: -53.6 },
+        multiplier: 1.0,
+      },
+      {
         name: "Gran Chaco",
         bounds: { north: -22, south: -31.5, west: -65.5, east: -58 },
         multiplier: 1.28,
@@ -45,6 +50,11 @@ export const countries: CountryProfile[] = [
     code: "AUS",
     bounds: { north: -10, south: -44, west: 112, east: 154 },
     presets: [
+      {
+        name: "National",
+        bounds: { north: -10, south: -44, west: 112, east: 154 },
+        multiplier: 1.0,
+      },
       {
         name: "Northern Savanna",
         bounds: { north: -11, south: -21, west: 123, east: 142 },
@@ -77,6 +87,11 @@ export const countries: CountryProfile[] = [
     bounds: { north: 5.3, south: -33.8, west: -73.9, east: -34.8 },
     presets: [
       {
+        name: "National",
+        bounds: { north: 5.3, south: -33.8, west: -73.9, east: -34.8 },
+        multiplier: 1.0,
+      },
+      {
         name: "Amazon Arc",
         bounds: { north: -5, south: -14, west: -65, east: -48 },
         multiplier: 1.37,
@@ -107,6 +122,11 @@ export const countries: CountryProfile[] = [
     code: "CHL",
     bounds: { north: -17.5, south: -55.9, west: -75.7, east: -66.4 },
     presets: [
+      {
+        name: "National",
+        bounds: { north: -17.5, south: -55.9, west: -75.7, east: -66.4 },
+        multiplier: 1.0,
+      },
       {
         name: "Central Chile",
         bounds: { north: -30, south: -38, west: -73.5, east: -69.5 },
@@ -139,6 +159,11 @@ export const countries: CountryProfile[] = [
     bounds: { north: -19.3, south: -27.6, west: -62.7, east: -54.2 },
     presets: [
       {
+        name: "National",
+        bounds: { north: -19.3, south: -27.6, west: -62.7, east: -54.2 },
+        multiplier: 1.0,
+      },
+      {
         name: "Dry Chaco",
         bounds: { north: -20, south: -25, west: -62, east: -58 },
         multiplier: 1.44,
@@ -170,6 +195,11 @@ export const countries: CountryProfile[] = [
     bounds: { north: -30, south: -35.1, west: -58.5, east: -53.1 },
     presets: [
       {
+        name: "National",
+        bounds: { north: -30, south: -35.1, west: -58.5, east: -53.1 },
+        multiplier: 1.0,
+      },
+      {
         name: "Northern Grasslands",
         bounds: { north: -30.3, south: -32.6, west: -57.8, east: -54.5 },
         multiplier: 1.18,
@@ -200,6 +230,11 @@ export const countries: CountryProfile[] = [
     code: "USA",
     bounds: { north: 49.4, south: 24.5, west: -125.0, east: -66.9 },
     presets: [
+      {
+        name: "National",
+        bounds: { north: 49.4, south: 24.5, west: -125.0, east: -66.9 },
+        multiplier: 1.0,
+      },
       {
         name: "California & West",
         bounds: { north: 42.0, south: 32.5, west: -124.5, east: -114.1 },
@@ -237,6 +272,11 @@ export const countries: CountryProfile[] = [
     bounds: { north: 69.0, south: 42.0, west: -141.0, east: -52.6 },
     presets: [
       {
+        name: "National",
+        bounds: { north: 69.0, south: 42.0, west: -141.0, east: -52.6 },
+        multiplier: 1.0,
+      },
+      {
         name: "Western Boreal",
         bounds: { north: 60.0, south: 49.0, west: -139.0, east: -110.0 },
         multiplier: 1.55,
@@ -268,6 +308,11 @@ export const countries: CountryProfile[] = [
     bounds: { north: 41.8, south: 34.8, west: 19.4, east: 28.3 },
     presets: [
       {
+        name: "National",
+        bounds: { north: 41.8, south: 34.8, west: 19.4, east: 28.3 },
+        multiplier: 1.0,
+      },
+      {
         name: "Attica & Central Greece",
         bounds: { north: 39.2, south: 37.5, west: 21.5, east: 24.5 },
         multiplier: 1.42,
@@ -298,6 +343,11 @@ export const countries: CountryProfile[] = [
     code: "PRT",
     bounds: { north: 42.2, south: 36.9, west: -9.6, east: -6.1 },
     presets: [
+      {
+        name: "National",
+        bounds: { north: 42.2, south: 36.9, west: -9.6, east: -6.1 },
+        multiplier: 1.0,
+      },
       {
         name: "Centro / Pinhal Interior",
         bounds: { north: 40.5, south: 39.5, west: -8.8, east: -7.5 },

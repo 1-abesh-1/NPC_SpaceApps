@@ -22,10 +22,8 @@ export default function App() {
   const [theme, setTheme] = useState<ThemeId>(() =>
     localStorage.getItem("firecalendar-theme") === "paper" ? "paper" : "ember",
   )
-  const [bounds, setBounds] = useState<Bounds>(countries[0].presets[0].bounds)
-  const [aoiMultiplier, setAoiMultiplier] = useState(
-    countries[0].presets[0].multiplier,
-  )
+  const [bounds, setBounds] = useState<Bounds>(countries[0].bounds)
+  const [aoiMultiplier, setAoiMultiplier] = useState(1)
   const [calibrationOpen, setCalibrationOpen] = useState(false)
   const [backendData, setBackendData] = useState<DashboardData | null>(null)
   const [backendTrust, setBackendTrust] = useState<{ k: number; r: number } | null>(null)
@@ -108,8 +106,8 @@ export default function App() {
   const handleCountry = useCallback(
     (next: typeof country) => {
       setCountry(next)
-      setBounds(next.presets[0].bounds)
-      setAoiMultiplier(next.presets[0].multiplier)
+      setBounds(next.bounds)
+      setAoiMultiplier(1)
       const maxYear = next.lastYear ?? 2024
       if (year > maxYear) {
         setYear(maxYear)
