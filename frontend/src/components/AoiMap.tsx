@@ -586,7 +586,15 @@ export default function AoiMap({
               cursor: "pointer",
             }}
           >
-            {Array.from({ length: 24 }, (_, i) => 2026 - i).map((y) => (
+            {Array.from(
+              {
+                length:
+                  (country.lastYear ?? 2026) -
+                  (country.firstYear ?? 2003) +
+                  1,
+              },
+              (_, i) => (country.lastYear ?? 2026) - i,
+            ).map((y) => (
               <option key={y} value={y} style={{ background: "#111", color: "#fff" }}>
                 {y}
               </option>

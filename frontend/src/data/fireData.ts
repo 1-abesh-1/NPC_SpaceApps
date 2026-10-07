@@ -36,6 +36,8 @@ export const countries: CountryProfile[] = [
     currentAnomaly: 3.2,
     correlation: 0.99,
     calibration: 2.41,
+    firstYear: 2003,
+    lastYear: 2026,
   },
   {
     id: "australia",
@@ -65,6 +67,8 @@ export const countries: CountryProfile[] = [
     currentAnomaly: 2.7,
     correlation: 0.98,
     calibration: 2.57,
+    firstYear: 2003,
+    lastYear: 2024,
   },
   {
     id: "brazil",
@@ -94,6 +98,8 @@ export const countries: CountryProfile[] = [
     currentAnomaly: 3.7,
     correlation: 0.99,
     calibration: 2.38,
+    firstYear: 2003,
+    lastYear: 2024,
   },
   {
     id: "chile",
@@ -123,6 +129,8 @@ export const countries: CountryProfile[] = [
     currentAnomaly: 2.4,
     correlation: 0.98,
     calibration: 2.44,
+    firstYear: 2003,
+    lastYear: 2024,
   },
   {
     id: "paraguay",
@@ -152,6 +160,8 @@ export const countries: CountryProfile[] = [
     currentAnomaly: 3.1,
     correlation: 0.99,
     calibration: 2.36,
+    firstYear: 2003,
+    lastYear: 2024,
   },
   {
     id: "uruguay",
@@ -181,6 +191,8 @@ export const countries: CountryProfile[] = [
     currentAnomaly: 2.1,
     correlation: 0.97,
     calibration: 2.48,
+    firstYear: 2003,
+    lastYear: 2024,
   },
 ]
 

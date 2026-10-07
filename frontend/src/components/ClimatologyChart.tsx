@@ -6,9 +6,9 @@ type Props = {
   records: DailyRecord[]
 }
 
-const W = 720
-const H = 214
-const PAD = { top: 16, right: 14, bottom: 30, left: 46 }
+const W = 780
+const H = 270
+const PAD = { top: 20, right: 20, bottom: 42, left: 58 }
 
 export default function ClimatologyChart({ records }: Props) {
   const [hovered, setHovered] = useState<DailyRecord | null>(null)
@@ -74,6 +74,8 @@ export default function ClimatologyChart({ records }: Props) {
     setHovered(records[day - 1])
   }
 
+  const activeYear = records[0]?.year ?? 2024
+
   return (
     <div className="chart-block">
       <div className="chart-title-row">
@@ -86,7 +88,7 @@ export default function ClimatologyChart({ records }: Props) {
             <i className="legend-band" /> 20Y normal ±2σ
           </span>
           <span>
-            <i className="legend-line" /> 2026 observed
+            <i className="legend-line" /> {activeYear} observed
           </span>
         </div>
       </div>
@@ -129,9 +131,18 @@ export default function ClimatologyChart({ records }: Props) {
             </g>
           ))}
           {months.map(([day, label]) => (
-            <text className="chart-month" key={label} x={x(day)} y={H - 8}>
-              {label}
-            </text>
+            <g key={label}>
+              <line
+                className="chart-month-tick"
+                x1={x(day)}
+                x2={x(day)}
+                y1={H - PAD.bottom}
+                y2={H - PAD.bottom + 6}
+              />
+              <text className="chart-month" x={x(day)} y={H - 12}>
+                {label}
+              </text>
+            </g>
           ))}
           <path className="baseline-band" d={band} />
           <path className="mean-line" d={path((record) => record.mean)} />
@@ -165,13 +176,12 @@ export default function ClimatologyChart({ records }: Props) {
               left: `${Math.min(78, Math.max(18, (hovered.day / 365) * 100))}%`,
             }}
           >
-            <span>{dayToDate(hovered.day)}</span>
+            <span>{dayToDate(hovered.day, hovered.year)} ({hovered.year}) · DOY {String(hovered.day).padStart(3, "0")}</span>
             <b>{formatNumber(hovered.count)} detections</b>
             <small>
-              Expected {formatNumber(hovered.mean - hovered.stdDev * 2)}–
-              {formatNumber(hovered.mean + hovered.stdDev * 2)} · z{" "}
+              Baseline {formatNumber(hovered.mean)} (±{formatNumber(hovered.stdDev * 2)}) · z{" "}
               {hovered.zScore >= 0 ? "+" : ""}
-              {hovered.zScore.toFixed(1)}
+              {hovered.zScore.toFixed(1)}σ
             </small>
           </div>
         )}

@@ -105,11 +105,18 @@ export default function App() {
     [data, horizon],
   )
 
-  const handleCountry = useCallback((next: typeof country) => {
-    setCountry(next)
-    setBounds(next.presets[0].bounds)
-    setAoiMultiplier(next.presets[0].multiplier)
-  }, [])
+  const handleCountry = useCallback(
+    (next: typeof country) => {
+      setCountry(next)
+      setBounds(next.presets[0].bounds)
+      setAoiMultiplier(next.presets[0].multiplier)
+      const maxYear = next.lastYear ?? 2024
+      if (year > maxYear) {
+        setYear(maxYear)
+      }
+    },
+    [year],
+  )
 
   const handleBounds = useCallback(
     (next: Bounds, _preset = "Custom area", multiplier = 1) => {

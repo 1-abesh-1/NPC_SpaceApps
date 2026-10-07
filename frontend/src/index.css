@@ -603,11 +603,54 @@ button {
 }
 
 .chart-title-row {
-  display: none;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.chart-title-row h3 {
+  font-family: "Jura", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.chart-legend {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+}
+
+.chart-legend span {
+  align-items: center;
+  color: #a1a1aa;
+  display: flex;
+  font-family: "Geist Mono", monospace;
+  font-size: 10px;
+  gap: 6px;
+}
+
+.legend-band {
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 2px;
+  display: inline-block;
+  height: 8px;
+  width: 14px;
+}
+
+.legend-line {
+  background: #ff3b30;
+  border-radius: 1px;
+  box-shadow: 0 0 6px rgba(255, 59, 48, 0.8);
+  display: inline-block;
+  height: 2.5px;
+  width: 14px;
 }
 
 .chart-wrap {
-  height: 190px;
+  height: 260px;
   position: relative;
 }
 
@@ -618,22 +661,26 @@ button {
 }
 
 .chart-grid {
-  stroke: var(--strata-line);
-  stroke-width: 0.5;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 0.6;
 }
 
-.chart-axis,
-.chart-month {
-  fill: var(--chip-color);
-  font: 400 8px "Jura", sans-serif;
-  letter-spacing: 0.3px;
+.chart-month-tick {
+  stroke: rgba(255, 255, 255, 0.25);
+  stroke-width: 0.8;
 }
 
 .chart-axis {
+  fill: #a1a1aa;
+  font: 500 10.5px "Geist Mono", monospace;
+  letter-spacing: 0.3px;
   text-anchor: end;
 }
 
 .chart-month {
+  fill: #f4f4f5;
+  font: 600 11px "Geist Mono", monospace;
+  letter-spacing: 0.6px;
   text-anchor: middle;
 }
 
@@ -757,42 +804,46 @@ button {
 .calendar-months {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  margin: 27px 0 9px 36px;
+  margin: 24px 0 10px 42px;
 }
 
 .calendar-months span {
-  color: var(--chip-color);
-  font-family: "Jura", sans-serif;
-  font-size: 9px;
+  color: #f4f4f5;
+  font-family: "Geist Mono", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
   text-align: center;
 }
 
 .compact-calendar {
   display: grid;
-  gap: 5px;
+  gap: 6px;
 }
 
 .calendar-line {
   border: 0;
-  border-radius: 0;
-  height: 4px;
-  margin-left: 36px;
+  border-radius: 1px;
+  height: 6px;
+  margin-left: 42px;
   padding: 0;
   position: relative;
+  transition: height 120ms;
 }
 
 .calendar-line span {
-  color: var(--chip-color);
+  color: #e4e4e7;
   font-family: "Geist Mono", monospace;
-  font-size: 8px;
-  left: -36px;
+  font-size: 10px;
+  font-weight: 600;
+  left: -42px;
   position: absolute;
-  top: -3px;
+  top: -4px;
 }
 
 .calendar-line:hover {
-  height: 7px;
-  margin-bottom: -3px;
+  height: 10px;
+  margin-bottom: -4px;
 }
 
 .calendar-inspector {

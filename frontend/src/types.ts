@@ -27,6 +27,8 @@ export type CountryProfile = {
   currentAnomaly: number
   correlation: number
   calibration: number
+  firstYear?: number
+  lastYear?: number
 }
 
 export type DailyRecord = {
