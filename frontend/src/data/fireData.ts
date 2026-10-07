@@ -15,23 +15,23 @@ export const countries: CountryProfile[] = [
     bounds: { north: -21.8, south: -55.1, west: -73.6, east: -53.6 },
     presets: [
       {
-        name: "National",
-        bounds: { north: -21.8, south: -55.1, west: -73.6, east: -53.6 },
+        name: "Overview",
+        bounds: { north: -31.4, south: -45.5, west: -68.5, east: -58.7 },
         multiplier: 1.0,
       },
       {
+        name: "Pampas & Córdoba",
+        bounds: { north: -31.5, south: -38.5, west: -66.5, east: -61.5 },
+        multiplier: 1.35,
+      },
+      {
         name: "Gran Chaco",
-        bounds: { north: -22, south: -31.5, west: -65.5, east: -58 },
+        bounds: { north: -25.5, south: -32.0, west: -65.5, east: -59.5 },
         multiplier: 1.28,
       },
       {
-        name: "Pantanal",
-        bounds: { north: -15, south: -22, west: -61, east: -54 },
-        multiplier: 1.42,
-      },
-      {
         name: "Patagonia",
-        bounds: { north: -38, south: -51.5, west: -73, east: -64 },
+        bounds: { north: -39.0, south: -50.0, west: -72.0, east: -65.0 },
         multiplier: 0.62,
       },
     ],
@@ -51,23 +51,23 @@ export const countries: CountryProfile[] = [
     bounds: { north: -10, south: -44, west: 112, east: 154 },
     presets: [
       {
-        name: "National",
-        bounds: { north: -10, south: -44, west: 112, east: 154 },
+        name: "Overview",
+        bounds: { north: -15.0, south: -39.0, west: 118.0, east: 148.0 },
         multiplier: 1.0,
       },
       {
         name: "Northern Savanna",
-        bounds: { north: -11, south: -21, west: 123, east: 142 },
+        bounds: { north: -11.0, south: -21.0, west: 123.0, east: 142.0 },
         multiplier: 1.35,
       },
       {
         name: "Southeast Forests",
-        bounds: { north: -31, south: -39, west: 144, east: 151 },
+        bounds: { north: -31.0, south: -39.0, west: 144.0, east: 151.0 },
         multiplier: 1.52,
       },
       {
         name: "Western Rangelands",
-        bounds: { north: -20, south: -32, west: 116, east: 129 },
+        bounds: { north: -20.0, south: -32.0, west: 116.0, east: 129.0 },
         multiplier: 0.86,
       },
     ],
@@ -87,23 +87,23 @@ export const countries: CountryProfile[] = [
     bounds: { north: 5.3, south: -33.8, west: -73.9, east: -34.8 },
     presets: [
       {
-        name: "National",
-        bounds: { north: 5.3, south: -33.8, west: -73.9, east: -34.8 },
+        name: "Overview",
+        bounds: { north: -7.5, south: -21.0, west: -63.0, east: -45.7 },
         multiplier: 1.0,
       },
       {
         name: "Amazon Arc",
-        bounds: { north: -5, south: -14, west: -65, east: -48 },
+        bounds: { north: -5.0, south: -13.0, west: -65.0, east: -50.0 },
         multiplier: 1.37,
       },
       {
         name: "Pantanal",
-        bounds: { north: -15, south: -23, west: -60, east: -54 },
+        bounds: { north: -15.0, south: -21.5, west: -59.5, east: -54.5 },
         multiplier: 1.66,
       },
       {
         name: "Cerrado",
-        bounds: { north: -8, south: -21, west: -57, east: -42 },
+        bounds: { north: -8.0, south: -18.0, west: -55.0, east: -43.0 },
         multiplier: 1.15,
       },
     ],
@@ -123,23 +123,23 @@ export const countries: CountryProfile[] = [
     bounds: { north: -17.5, south: -55.9, west: -75.7, east: -66.4 },
     presets: [
       {
-        name: "National",
-        bounds: { north: -17.5, south: -55.9, west: -75.7, east: -66.4 },
+        name: "Overview",
+        bounds: { north: -30.0, south: -43.4, west: -74.5, east: -67.6 },
         multiplier: 1.0,
       },
       {
         name: "Central Chile",
-        bounds: { north: -30, south: -38, west: -73.5, east: -69.5 },
+        bounds: { north: -32.0, south: -37.5, west: -73.0, east: -69.8 },
         multiplier: 1.38,
       },
       {
         name: "Araucanía",
-        bounds: { north: -37, south: -40, west: -73.5, east: -70 },
+        bounds: { north: -37.5, south: -40.5, west: -73.5, east: -71.0 },
         multiplier: 1.19,
       },
       {
-        name: "Patagonia",
-        bounds: { north: -41, south: -52, west: -75, east: -68 },
+        name: "Patagonia Sur",
+        bounds: { north: -42.0, south: -52.0, west: -75.0, east: -70.0 },
         multiplier: 0.58,
       },
     ],
@@ -159,23 +159,23 @@ export const countries: CountryProfile[] = [
     bounds: { north: -19.3, south: -27.6, west: -62.7, east: -54.2 },
     presets: [
       {
-        name: "National",
-        bounds: { north: -19.3, south: -27.6, west: -62.7, east: -54.2 },
+        name: "Overview",
+        bounds: { north: -19.9, south: -27.0, west: -62.0, east: -54.9 },
         multiplier: 1.0,
       },
       {
         name: "Dry Chaco",
-        bounds: { north: -20, south: -25, west: -62, east: -58 },
+        bounds: { north: -20.0, south: -24.5, west: -62.0, east: -58.8 },
         multiplier: 1.44,
       },
       {
         name: "Atlantic Forest",
-        bounds: { north: -23, south: -27, west: -56.5, east: -54.5 },
+        bounds: { north: -23.8, south: -27.0, west: -56.5, east: -54.5 },
         multiplier: 0.91,
       },
       {
         name: "Pilcomayo",
-        bounds: { north: -22, south: -26, west: -61, east: -58 },
+        bounds: { north: -22.0, south: -25.5, west: -61.0, east: -58.8 },
         multiplier: 1.12,
       },
     ],
@@ -195,23 +195,23 @@ export const countries: CountryProfile[] = [
     bounds: { north: -30, south: -35.1, west: -58.5, east: -53.1 },
     presets: [
       {
-        name: "National",
-        bounds: { north: -30, south: -35.1, west: -58.5, east: -53.1 },
+        name: "Overview",
+        bounds: { north: -30.2, south: -34.9, west: -58.2, east: -53.4 },
         multiplier: 1.0,
       },
       {
         name: "Northern Grasslands",
-        bounds: { north: -30.3, south: -32.6, west: -57.8, east: -54.5 },
+        bounds: { north: -30.5, south: -32.8, west: -57.5, east: -54.8 },
         multiplier: 1.18,
       },
       {
         name: "Coastal Plain",
-        bounds: { north: -32.3, south: -34.8, west: -55.3, east: -53.3 },
+        bounds: { north: -32.5, south: -34.8, west: -55.3, east: -53.3 },
         multiplier: 0.72,
       },
       {
         name: "Río Negro",
-        bounds: { north: -31.5, south: -33.5, west: -58, east: -55.5 },
+        bounds: { north: -31.5, south: -33.5, west: -57.8, east: -55.5 },
         multiplier: 1.04,
       },
     ],
@@ -231,8 +231,8 @@ export const countries: CountryProfile[] = [
     bounds: { north: 49.4, south: 24.5, west: -125.0, east: -66.9 },
     presets: [
       {
-        name: "National",
-        bounds: { north: 49.4, south: 24.5, west: -125.0, east: -66.9 },
+        name: "Overview",
+        bounds: { north: 45.0, south: 28.9, west: -115.0, east: -76.9 },
         multiplier: 1.0,
       },
       {
@@ -242,7 +242,7 @@ export const countries: CountryProfile[] = [
       },
       {
         name: "Pacific Northwest",
-        bounds: { north: 49.0, south: 42.0, west: -124.8, east: -116.5 },
+        bounds: { north: 48.5, south: 42.0, west: -124.8, east: -116.5 },
         multiplier: 1.32,
       },
       {
@@ -272,8 +272,8 @@ export const countries: CountryProfile[] = [
     bounds: { north: 69.0, south: 42.0, west: -141.0, east: -52.6 },
     presets: [
       {
-        name: "National",
-        bounds: { north: 69.0, south: 42.0, west: -141.0, east: -52.6 },
+        name: "Overview",
+        bounds: { north: 65.0, south: 46.0, west: -125.0, east: -68.6 },
         multiplier: 1.0,
       },
       {
@@ -288,7 +288,7 @@ export const countries: CountryProfile[] = [
       },
       {
         name: "Eastern Boreal",
-        bounds: { north: 55.0, south: 45.0, west: -85.0, east: -65.0 },
+        bounds: { north: 55.0, south: 46.0, west: -85.0, east: -65.0 },
         multiplier: 1.62,
       },
     ],
@@ -308,8 +308,8 @@ export const countries: CountryProfile[] = [
     bounds: { north: 41.8, south: 34.8, west: 19.4, east: 28.3 },
     presets: [
       {
-        name: "National",
-        bounds: { north: 41.8, south: 34.8, west: 19.4, east: 28.3 },
+        name: "Overview",
+        bounds: { north: 41.5, south: 35.1, west: 20.0, east: 27.7 },
         multiplier: 1.0,
       },
       {
@@ -344,8 +344,8 @@ export const countries: CountryProfile[] = [
     bounds: { north: 42.2, south: 36.9, west: -9.6, east: -6.1 },
     presets: [
       {
-        name: "National",
-        bounds: { north: 42.2, south: 36.9, west: -9.6, east: -6.1 },
+        name: "Overview",
+        bounds: { north: 42.1, south: 37.0, west: -9.5, east: -6.2 },
         multiplier: 1.0,
       },
       {

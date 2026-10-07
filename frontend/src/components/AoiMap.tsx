@@ -350,7 +350,7 @@ export default function AoiMap({
     lastCountryRef.current = item.id
     setView(viewForCountry(item))
     onCountry(item)
-    onBounds(item.bounds, "National", 1)
+    onBounds(item.presets[0].bounds, item.presets[0].name, item.presets[0].multiplier)
   }
 
   return (
@@ -553,7 +553,7 @@ export default function AoiMap({
         <button
           onClick={() => {
             setDrawing(false)
-            onBounds(country.bounds, "National", 1)
+            onBounds(country.presets[0].bounds, country.presets[0].name, country.presets[0].multiplier)
             setView(viewForCountry(country))
           }}
           type="button"
