@@ -9,11 +9,16 @@ Modular architecture:
   - backend/core/      : Global configuration, paths & constants
 """
 
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from backend.api import api_router
+
+ROOT = Path(__file__).resolve().parent.parent
+FRONTEND_DIST = ROOT / "frontend" / "dist"
 
 app = FastAPI(
     title="FireCalendar API",
@@ -36,13 +41,16 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 # Register all modular API routers under /api
 app.include_router(api_router)
 
-
-@app.get("/")
-def root():
-    """Root landing endpoint."""
-    return {
-        "app": "FireCalendar Backend",
-        "docs": "/docs",
-        "health": "/api/health",
-        "countries": "/api/countries",
-    }
+# Mount production frontend build if available, else show API info
+if FRONTEND_DIST.exists():
+    app.mount("/", StaticFiles(directory=str(FRONTEND_DIST), html=True), name="frontend")
+else:
+    @app.get("/")
+    def root():
+        """Root landing endpoint."""
+        return {
+            "app": "FireCalendar Backend",
+            "docs": "/docs",
+            "health": "/api/health",
+            "countries": "/api/countries",
+        }

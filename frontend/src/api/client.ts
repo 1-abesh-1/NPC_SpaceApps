@@ -8,7 +8,12 @@
 import { severityFor } from "../data/fireData"
 import type { Bounds, CountryProfile, DailyRecord, DashboardData, Severity } from "../types"
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "")
+const API_BASE = (
+  import.meta.env.VITE_API_BASE_URL ||
+  (typeof window !== "undefined" && window.location.port === "5173"
+    ? "http://127.0.0.1:8000"
+    : "")
+).replace(/\/$/, "")
 
 export type BackendCountry = {
   iso: string
