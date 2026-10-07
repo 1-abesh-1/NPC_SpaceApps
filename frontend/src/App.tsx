@@ -1,0 +1,198 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import AoiMap from "./components/AoiMap"
+import CalibrationDialog from "./components/CalibrationDialog"
+import CommandBar from "./components/CommandBar"
+import HistoricalCalendar from "./components/HistoricalCalendar"
+import IntelligencePanel from "./components/IntelligencePanel"
+import {
+  countries,
+  generateAreaDashboardData,
+  rowsForHorizon,
+} from "./data/fireData"
+import { fetchBackendAnalysis, fetchBackendTrust } from "./api/client"
+import type { Bounds, CountryProfile, DashboardData, Horizon, ThemeId } from "./types"
+
+export default function App() {
+  const shellRef = useRef<HTMLDivElement>(null)
+  const resizeRef = useRef<{ start: number width: number } | null>(null)
+  const [country, setCountry] = useState<CountryProfile>(countries[0])
+  const [horizon, setHorizon] = useState<Horizon>(23)
+  const [day, setDay] = useState(258)
+  const [theme, setTheme] = useState<ThemeId>(() =>
+    localStorage.getItem("firecalendar-theme") === "paper" ? "paper" : "ember",
+  )
+  const [bounds, setBounds] = useState<Bounds>(countries[0].presets[0].bounds)
+  const [aoiMultiplier, setAoiMultiplier] = useState(
+    countries[0].presets[0].multiplier,
+  )
+  const [calibrationOpen, setCalibrationOpen] = useState(false)
+  const [backendData, setBackendData] = useState<DashboardData | null>(null)
+  const [backendTrust, setBackendTrust] = useState<{ k: number; r: number } | null>(null)
+
+  useEffect(() => {
+    localStorage.setItem("firecalendar-theme", theme)
+    document.documentElement.classList.toggle("dark", theme === "ember")
+  }, [theme])
+
+  // Fetch real trust calibration metrics for current country
+  useEffect(() => {
+    let active = true
+    fetchBackendTrust(country.code)
+      .then((trust) => {
+        if (!active) return
+        setBackendTrust({ k: trust.k, r: trust.r })
+      })
+      .catch(() => {
+        // Fallback silently if offline
+      })
+    return () => {
+      active = false
+    }
+  }, [country.code])
+
+  // Fetch real backend analysis for selected country and bounding box
+  useEffect(() => {
+    const controller = new AbortController()
+    const timer = setTimeout(() => {
+      fetchBackendAnalysis(country.code, bounds, day, controller.signal)
+        .then((realData) => {
+          setBackendData(realData)
+        })
+        .catch((err) => {
+          if (err.name !== "AbortError") {
+            // keep fallback
+          }
+        })
+    }, 150) // 150ms debounce for smooth dragging
+
+    return () => {
+      clearTimeout(timer)
+      controller.abort()
+    }
+  }, [country.code, bounds, day])
+
+  // Enhanced country profile with live measured k and r
+  const activeCountry = useMemo(() => {
+    if (!backendTrust) return country
+    return {
+      ...country,
+      calibration: backendTrust.k,
+      correlation: backendTrust.r,
+    }
+  }, [country, backendTrust])
+
+  // Use real backend data if loaded, otherwise fallback to local generator
+  const data = useMemo(() => {
+    if (backendData && backendData.current.length >= 365) {
+      const metricDay =
+        backendData.current[Math.min(365, Math.max(1, day)) - 1] ||
+        backendData.current.reduce((best, r) => (r.zScore > best.zScore ? r : best), backendData.current[0])
+      return {
+        ...backendData,
+        metricDay,
+      }
+    }
+    const generated = generateAreaDashboardData(activeCountry, bounds, aoiMultiplier)
+    return {
+      ...generated,
+      metricDay: generated.current[day - 1],
+    }
+  }, [backendData, activeCountry, bounds, aoiMultiplier, day])
+
+  const visibleRows = useMemo(
+    () => rowsForHorizon(data, horizon),
+    [data, horizon],
+  )
+
+  const handleCountry = useCallback((next: typeof country) => {
+    setCountry(next)
+    setBounds(next.presets[0].bounds)
+    setAoiMultiplier(next.presets[0].multiplier)
+  }, [])
+
+  const handleBounds = useCallback(
+    (next: Bounds, _preset = "Custom area", multiplier = 1) => {
+      setBounds(next)
+      setAoiMultiplier(multiplier)
+    },
+    [],
+  )
+
+  const handlePreset = (index: number) => {
+    const preset = country.presets[index]
+    setBounds(preset.bounds)
+    setAoiMultiplier(preset.multiplier)
+  }
+
+  return (
+    <div className="app-shell" data-theme={theme}>
+      <a className="skip-link" href="#analysis-panel">
+        Skip to analysis
+      </a>
+      <CommandBar onTheme={setTheme} theme={theme} />
+      <main className="strata-layout" ref={shellRef}>
+        <aside className="analysis-panel strata-scroll" id="analysis-panel">
+          <IntelligencePanel
+            country={activeCountry}
+            data={data}
+            onCountry={handleCountry}
+            onIntegrity={() => setCalibrationOpen(true)}
+            onPreset={handlePreset}
+          />
+          <HistoricalCalendar horizon={horizon} rows={visibleRows} />
+        </aside>
+        <div
+          aria-label="Resize analysis panel"
+          className="panel-resizer"
+          onPointerDown={(event) => {
+            event.currentTarget.setPointerCapture(event.pointerId)
+            const current = parseFloat(
+              getComputedStyle(shellRef.current!).getPropertyValue(
+                "--left-width",
+              ),
+            )
+            resizeRef.current = {
+              start: event.clientX,
+              width: Number.isFinite(current) ? current : 500,
+            }
+          }}
+          onPointerMove={(event) => {
+            if (!resizeRef.current || !shellRef.current) return
+            const next = Math.min(
+              680,
+              Math.max(
+                400,
+                resizeRef.current.width +
+                  event.clientX -
+                  resizeRef.current.start,
+              ),
+            )
+            shellRef.current.style.setProperty("--left-width", `${next}px`)
+          }}
+          onPointerUp={() => {
+            resizeRef.current = null
+          }}
+          role="separator"
+        />
+        <div className="visual-panel">
+          <AoiMap
+            anomaly={data.metricDay.zScore}
+            bounds={bounds}
+            country={activeCountry}
+            day={day}
+            horizon={horizon}
+            onBounds={handleBounds}
+            onCountry={handleCountry}
+            onDay={setDay}
+            onHorizon={setHorizon}
+          />
+        </div>
+      </main>
+      <CalibrationDialog
+        country={activeCountry}
+        onClose={() => setCalibrationOpen(false)}
+        open={calibrationOpen}
+      />
+    </div>
+  )
+}
