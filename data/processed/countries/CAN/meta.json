@@ -1,0 +1,24 @@
+{
+  "iso": "CAN",
+  "name": "Canada",
+  "bbox": [
+    -141.25,
+    41.75,
+    -52.5,
+    82.75
+  ],
+  "k": 0.377,
+  "k_source": "measured",
+  "r": 0.982,
+  "gaps": {
+    "daily": 0.389,
+    "weekly": 0.301,
+    "monthly": 0.216
+  },
+  "quiet_ratio": 5.47,
+  "busy_ratio": 2.56,
+  "first_year": 2003,
+  "last_year": 2024,
+  "total_footprints": 1044356,
+  "status": "ready"
+}

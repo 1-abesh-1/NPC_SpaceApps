@@ -1,0 +1,24 @@
+{
+  "iso": "GRC",
+  "name": "Greece",
+  "bbox": [
+    19.5,
+    34.75,
+    28.25,
+    41.75
+  ],
+  "k": 0.337,
+  "k_source": "measured",
+  "r": 0.925,
+  "gaps": {
+    "daily": 0.531,
+    "weekly": 0.575,
+    "monthly": 0.528
+  },
+  "quiet_ratio": 9.07,
+  "busy_ratio": 2.75,
+  "first_year": 2003,
+  "last_year": 2024,
+  "total_footprints": 36885,
+  "status": "ready"
+}

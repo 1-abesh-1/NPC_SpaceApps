@@ -1,0 +1,24 @@
+{
+  "iso": "USA",
+  "name": "United States",
+  "bbox": [
+    -179.0,
+    18.75,
+    179.75,
+    71.5
+  ],
+  "k": 0.393,
+  "k_source": "measured",
+  "r": 0.961,
+  "gaps": {
+    "daily": 0.232,
+    "weekly": 0.161,
+    "monthly": 0.128
+  },
+  "quiet_ratio": 3.22,
+  "busy_ratio": 2.22,
+  "first_year": 2003,
+  "last_year": 2024,
+  "total_footprints": 2312761,
+  "status": "ready"
+}

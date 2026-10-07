@@ -35,15 +35,20 @@ OVERLAP_END = pd.Timestamp("2025-12-31")
 
 DEFAULT_POOLED_K = 0.478
 
-# Map ISO3 to Country Names used in FIRMS files
-COUNTRY_MAP = {
-    "ARG": "Argentina",
-    "CHL": "Chile",
-    "URY": "Uruguay",
-    "PRY": "Paraguay",
-    "AUS": "Australia",
-    "BRA": "Brazil",
+# Map ISO3 to Country File Names (in FIRMS zips) and display names
+COUNTRY_CONFIG = {
+    "ARG": {"file": "Argentina", "name": "Argentina"},
+    "CHL": {"file": "Chile", "name": "Chile"},
+    "URY": {"file": "Uruguay", "name": "Uruguay"},
+    "PRY": {"file": "Paraguay", "name": "Paraguay"},
+    "AUS": {"file": "Australia", "name": "Australia"},
+    "BRA": {"file": "Brazil", "name": "Brazil"},
+    "USA": {"file": "United_States", "name": "United States"},
+    "CAN": {"file": "Canada", "name": "Canada"},
+    "GRC": {"file": "Greece", "name": "Greece"},
+    "PRT": {"file": "Portugal", "name": "Portugal"},
 }
+COUNTRY_MAP = {k: v["name"] for k, v in COUNTRY_CONFIG.items()}
 
 
 def clean_modis(df: pd.DataFrame) -> pd.DataFrame:
@@ -250,13 +255,15 @@ def harmonize_grid(gm: pd.DataFrame, gv: pd.DataFrame, k: float) -> pd.DataFrame
 
 def process_country(iso: str):
     """Run full extraction, calibration, harmonization, and persistence for one country."""
-    country_name = COUNTRY_MAP.get(iso, iso)
+    cfg = COUNTRY_CONFIG.get(iso, {"file": iso, "name": iso})
+    country_file = cfg["file"]
+    country_name = cfg["name"]
     print(f"\n==================================================")
     print(f"Processing {country_name} ({iso})...")
     print(f"==================================================")
 
     # 1. Load Raw
-    modis_raw, viirs_raw = load_country_data(iso, country_name)
+    modis_raw, viirs_raw = load_country_data(iso, country_file)
     n_mod_raw = len(modis_raw)
     n_vii_raw = len(viirs_raw)
     print(f"  Raw detections: MODIS = {n_mod_raw:,}, VIIRS = {n_vii_raw:,}")

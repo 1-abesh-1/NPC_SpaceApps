@@ -72,6 +72,30 @@
     "status": "ready"
   },
   {
+    "iso": "CAN",
+    "name": "Canada",
+    "bbox": [
+      -141.25,
+      41.75,
+      -52.5,
+      82.75
+    ],
+    "k": 0.377,
+    "k_source": "measured",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.389,
+      "weekly": 0.301,
+      "monthly": 0.216
+    },
+    "quiet_ratio": 5.47,
+    "busy_ratio": 2.56,
+    "first_year": 2003,
+    "last_year": 2024,
+    "total_footprints": 1044356,
+    "status": "ready"
+  },
+  {
     "iso": "CHL",
     "name": "Chile",
     "bbox": [
@@ -96,6 +120,30 @@
     "status": "ready"
   },
   {
+    "iso": "GRC",
+    "name": "Greece",
+    "bbox": [
+      19.5,
+      34.75,
+      28.25,
+      41.75
+    ],
+    "k": 0.337,
+    "k_source": "measured",
+    "r": 0.925,
+    "gaps": {
+      "daily": 0.531,
+      "weekly": 0.575,
+      "monthly": 0.528
+    },
+    "quiet_ratio": 9.07,
+    "busy_ratio": 2.75,
+    "first_year": 2003,
+    "last_year": 2024,
+    "total_footprints": 36885,
+    "status": "ready"
+  },
+  {
     "iso": "PRY",
     "name": "Paraguay",
     "bbox": [
@@ -117,6 +165,54 @@
     "first_year": 2003,
     "last_year": 2024,
     "total_footprints": 839622,
+    "status": "ready"
+  },
+  {
+    "iso": "PRT",
+    "name": "Portugal",
+    "bbox": [
+      -29.0,
+      30.0,
+      -6.0,
+      42.25
+    ],
+    "k": 0.613,
+    "k_source": "measured",
+    "r": 0.984,
+    "gaps": {
+      "daily": 0.532,
+      "weekly": 0.634,
+      "monthly": 0.589
+    },
+    "quiet_ratio": 4.1,
+    "busy_ratio": 1.48,
+    "first_year": 2003,
+    "last_year": 2024,
+    "total_footprints": 56938,
+    "status": "ready"
+  },
+  {
+    "iso": "USA",
+    "name": "United States",
+    "bbox": [
+      -179.0,
+      18.75,
+      179.75,
+      71.5
+    ],
+    "k": 0.393,
+    "k_source": "measured",
+    "r": 0.961,
+    "gaps": {
+      "daily": 0.232,
+      "weekly": 0.161,
+      "monthly": 0.128
+    },
+    "quiet_ratio": 3.22,
+    "busy_ratio": 2.22,
+    "first_year": 2003,
+    "last_year": 2024,
+    "total_footprints": 2312761,
     "status": "ready"
   },
   {

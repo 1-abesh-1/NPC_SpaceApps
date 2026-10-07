@@ -49,7 +49,7 @@ const viewForCountry = (profile: CountryProfile): View => {
     1,
     projectY(profile.bounds.south) - projectY(profile.bounds.north),
   )
-  const scale = clamp(Math.min(W / (spanX * 3.1), H / (spanY * 2.25)), 1.8, 3.8)
+  const scale = clamp(Math.min(W / (spanX * 2.5), H / (spanY * 2.0)), 1.25, 4.0)
   return {
     x: W / 2 - centerX * scale,
     y: H / 2 - centerY * scale,

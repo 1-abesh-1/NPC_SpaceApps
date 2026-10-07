@@ -1297,11 +1297,15 @@ button {
 .region-picker {
   bottom: 17px;
   display: flex;
+  flex-wrap: wrap;
   gap: 3px;
+  justify-content: center;
   left: 50%;
+  max-width: 90%;
   padding: 4px;
   position: absolute;
   transform: translateX(-50%);
+  z-index: 5;
 }
 
 .region-picker > span {

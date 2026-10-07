@@ -1,0 +1,24 @@
+{
+  "iso": "PRT",
+  "name": "Portugal",
+  "bbox": [
+    -29.0,
+    30.0,
+    -6.0,
+    42.25
+  ],
+  "k": 0.613,
+  "k_source": "measured",
+  "r": 0.984,
+  "gaps": {
+    "daily": 0.532,
+    "weekly": 0.634,
+    "monthly": 0.589
+  },
+  "quiet_ratio": 4.1,
+  "busy_ratio": 1.48,
+  "first_year": 2003,
+  "last_year": 2024,
+  "total_footprints": 56938,
+  "status": "ready"
+}
