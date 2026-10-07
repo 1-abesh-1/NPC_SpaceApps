@@ -19,6 +19,8 @@ function countryToRegion(c) {
     maxLat,
     minLng,
     maxLng,
+    lat: (minLat + maxLat) / 2,
+    lng: (minLng + maxLng) / 2,
     firstYear: c.first_year,
     lastYear: c.last_year,
   };
