@@ -1,0 +1,278 @@
+================================================================================
+FIRECALENDAR: COMPLETE SYSTEM ARCHITECTURE & PROJECT HANDOVER CONTEXT
+================================================================================
+
+This document is a comprehensive, production-grade system specification and handover
+document for FireCalendar. Any LLM or software engineer can ingest this document to
+immediately understand the full codebase, scientific domain, data pipelines, file
+architecture, API contracts, frontend components, and active roadmaps without losing
+any context.
+
+--------------------------------------------------------------------------------
+1. PROJECT OVERVIEW & SCIENTIFIC DOMAIN
+--------------------------------------------------------------------------------
+What is FireCalendar?
+FireCalendar is an operational wildfire climatology, monitoring, and early-warning
+intelligence platform. It analyzes over two decades (2002 to 2024) of NASA satellite
+thermal hotspot detections (MODIS Terra/Aqua at 1 km resolution and VIIRS SNPP/NOAA-20
+at 375 m resolution) across global regions.
+
+Core Scientific Concepts:
+1. 22-Year Baseline Climatology:
+   - For every 8-day satellite composite window across 52 astronomical calendar
+     weeks, the platform computes historical percentiles (p10, p25, p50, p75, p90)
+     and standard deviations of Fire Radiative Power (FRP) and fire count.
+2. MODIS and VIIRS Sensor Harmonization:
+   - VIIRS has higher spatial resolution (375 m vs 1000 m) and detects up to 3x
+     to 5x more low-intensity fires than MODIS.
+   - FireCalendar incorporates cross-calibration ratios during the 2012 to 2024
+     sensor overlap era to prevent artificial trend inflation when transitioning
+     across satellites.
+3. Z-Score Anomaly and Early Warning:
+   - Real-time or recent satellite fire detections are benchmarked against the
+     historical mean (mu) and standard deviation (sigma) for that specific week
+     and spatial cell:
+       Z-score = (Current FRP - Historical Mean) / Historical StdDev
+   - Z >= 2.0: Critical Wildfire Anomaly (exceeds 97.7% of historical fire history
+     for this time of year).
+   - Z <= -1.0: Fire Suppression / Below Average.
+4. Spatial Granularity:
+   - Satellite data is pre-gridded into 0.25 degree spatial cells (~25 km x 25 km)
+     stored in columnar Apache Parquet files.
+   - Spatial slicing allows instantaneous aggregation not just for whole countries,
+     but for custom sub-national bounding boxes (states, districts, parks, or custom
+     user-drawn map circles).
+
+--------------------------------------------------------------------------------
+2. TECHNOLOGY STACK
+--------------------------------------------------------------------------------
+Backend:
+- Language / Runtime: Python 3.11+
+- Web Framework: FastAPI (asynchronous ASGI framework)
+- Server: Uvicorn (`uvicorn backend.main:app --reload --port 8000`)
+- Data Engine: PyArrow, Pandas, NumPy (direct predicate pushdown filtering on Parquet files)
+- Data Serialization: Pydantic v2 schemas
+- Static Assets Serving: FastAPI StaticFiles mounting compiled frontend build at `/`
+
+Frontend:
+- Framework: React 18 with TypeScript
+- Bundler and Tooling: Vite 5 (`npm run dev` on port 5173, `npm run build`)
+- Styling: Tailwind CSS and Vanilla CSS Design System with dark glassmorphic aesthetics
+- Icons: Lucide React
+- Visualizations: Custom Canvas/SVG interactive chart components (Seasonal Curves,
+  Z-Score Gauges, Metric Cards)
+- Map System (Current): Interactive Vector Map (AoiMap.tsx) with calibrated geographic circles.
+- Map System (In Transition): Leaflet + OpenStreetMap / CartoDB Dark Matter tiles with
+  interactive circle drawing tool (OsmMap.tsx).
+
+Deployment and DevOps:
+- Containerization: Multi-stage Dockerfile (Stage 1: Node.js 20 builds React; Stage 2:
+  Python 3.11 serves Uvicorn and pre-baked Parquet datasets).
+- Process Manager: Procfile (`web: uvicorn backend.main:app --host 0.0.0.0 --port $PORT`)
+  for Heroku, Railway, Render, or GCP Cloud Run.
+- Data Footprint: Pre-processed lightweight Parquet grids for 10 countries (~24 MB total),
+  committed to repository under data/processed/countries/.
+
+--------------------------------------------------------------------------------
+3. REPOSITORY DIRECTORY STRUCTURE
+--------------------------------------------------------------------------------
+d:/Fire/firecalendar/
+├── Dockerfile                         # Multi-stage production container build
+├── Procfile                           # Production process runner for PaaS hosting
+├── requirements.txt                   # Python backend dependencies
+├── package.json                       # Root workspace scripts (if applicable)
+├── frontend_redesign_spec.txt         # Frontend UX/UI guidelines and specifications
+├── PROJECT_CONTEXT.txt                # This handover documentation file
+│
+├── backend/
+│   ├── __init__.py
+│   ├── main.py                        # FastAPI entrypoint, CORS, static file mounts
+│   ├── api/
+│   │   ├── __init__.py
+│   │   └── routes.py                  # ALL API endpoints (Health, Countries, Trust, Analysis)
+│   ├── models/
+│   │   ├── __init__.py
+│   │   └── schemas.py                 # Pydantic request/response data contracts
+│   └── services/
+│       ├── __init__.py
+│       ├── country_service.py         # Country registry, directories, and metadata loader
+│       └── analysis_service.py        # Spatial Parquet slicing, baseline aggregation & Z-scores
+│
+├── data/
+│   ├── processed/
+│   │   └── countries/                 # Pre-computed country datasets (~24 MB total)
+│   │       ├── ARG/                   # Argentina
+│   │       │   ├── grid.parquet       # 0.25-deg cell historical 8-day records
+│   │       │   ├── metadata.json      # Bounding box, total area, grid shape
+│   │       │   └── trust_metrics.json # VIIRS/MODIS cross-calibration data
+│   │       ├── AUS/                   # Australia
+│   │       ├── BRA/                   # Brazil
+│   │       ├── CAN/                   # Canada
+│   │       ├── CHL/                   # Chile
+│   │       ├── COD/                   # Dem. Rep. Congo
+│   │       ├── IDN/                   # Indonesia
+│   │       ├── RUS/                   # Russia
+│   │       ├── USA/                   # United States
+│   │       └── ZAF/                   # South Africa
+│
+├── frontend/
+│   ├── index.html                     # HTML root
+│   ├── package.json                   # React, Vite, Lucide, TypeScript dependencies
+│   ├── tsconfig.json                  # TypeScript compiler settings
+│   ├── vite.config.ts                 # Vite bundler configuration
+│   ├── dist/                          # Production build output served by FastAPI in prod
+│   └── src/
+│       ├── main.tsx                   # React DOM root entry
+│       ├── App.tsx                    # Top-level state orchestration (AOI, bounds, fetching)
+│       ├── index.css                  # Global styles, variables, typography, animations
+│       ├── api/
+│       │   └── client.ts              # Axios/Fetch API client (relative in prod, localhost:8000 in dev)
+│       ├── data/
+│       │   └── fireData.ts            # Country registry, calibrated default circles (zero collision)
+│       └── components/
+│           ├── Header.tsx             # Navbar, live status badge, AOI title, view selector
+│           ├── AoiMap.tsx             # Current vector map with calibrated circles
+│           ├── MetricCards.tsx        # Total FRP, Anomaly Score, Season Peak, Trust Index
+│           ├── FireCalendarChart.tsx  # 52-week seasonal baseline curves with anomaly highlights
+│           ├── ZScoreGauge.tsx        # Color-coded anomaly gauge (-3.0 to +4.0+)
+│           ├── TrustCalibration.tsx   # MODIS vs VIIRS sensor agreement and data provenance
+│           └── FilterBar.tsx          # Year selector, satellite toggles, metric switches
+
+--------------------------------------------------------------------------------
+4. BACKEND API SPECIFICATION
+--------------------------------------------------------------------------------
+All endpoints are strictly registered under the `/api` prefix in backend/api/routes.py:
+
+1. GET /api/health
+   - Purpose: Liveness and readiness check.
+   - Response:
+     {
+       "status": "healthy",
+       "service": "firecalendar-api",
+       "version": "1.0.0"
+     }
+
+2. GET /api/countries
+   - Purpose: Returns all available pre-processed country AOIs with their geographic
+     bounds and metadata.
+   - Response: Array of CountryInfo:
+     [
+       {
+         "id": "USA",
+         "name": "United States",
+         "bbox": [-124.78, 24.74, -66.95, 49.38],
+         "center": [39.82, -98.57],
+         "area_km2": 9833517,
+         "num_grid_cells": 15420
+       }
+     ]
+
+3. GET /api/trust?country=USA
+   - Purpose: Returns sensor cross-calibration metrics, monthly VIIRS/MODIS fire count
+     overlap, ratio statistics, and temporal gaps.
+   - Response: TrustResponse model.
+
+4. GET /api/analysis?country=USA&bbox=-95.0,38.7,-94.1,39.5&year=2024
+   - Parameters:
+     * country (string, required): e.g. "USA", "BRA".
+     * bbox (string, optional): comma-separated bounding box min_lon,min_lat,max_lon,max_lat
+     * year (int, optional): Selected year for recent curve overlay (default: latest year).
+   - Execution Performance: ~120 ms to 185 ms response time.
+   - Backend Flow:
+     1. Opens data/processed/countries/{country}/grid.parquet.
+     2. If bbox is supplied, filters cells where min_lon <= lon <= max_lon and min_lat <= lat <= max_lat.
+     3. Groups by 8-day period (1 to 46) across all 22 years to build historical percentiles
+        (p10, p25, p50, p75, p90) and historical means (mu) and standard deviations (sigma).
+     4. Slices the target year data to compute week-by-week Z-scores and identify active fire anomalies.
+   - Response: AnalysisResponse schema containing metrics, status, and seasonal_baseline array.
+
+--------------------------------------------------------------------------------
+5. FRONTEND ARCHITECTURE & DATA FLOW
+--------------------------------------------------------------------------------
+1. State Management (App.tsx):
+   - selectedAoi: Currently selected country ID (e.g. 'USA', 'BRA').
+   - customBbox: Optional bounding box tuple [minLon, minLat, maxLon, maxLat] | null.
+   - analysisData: Holds response from /api/analysis.
+   - loading: Boolean indicating live query execution.
+   - activeYear: Default 2024, selectable back to 2002.
+
+2. API Client Configuration (frontend/src/api/client.ts):
+   - Development Mode: Routes to http://127.0.0.1:8000 (FastAPI dev server).
+   - Production Mode: Uses empty base URL "" to call relative routes /api/...,
+     which are served by the unified FastAPI server.
+
+3. Spatial Calibration Rule (Historical Fix):
+   - In frontend/src/data/fireData.ts, the default bounding boxes for the 10 countries
+     were calibrated so that each country's center marker sits strictly inside its
+     territory with zero neighbor circle collisions (for example, Argentina does
+     not overlap Chile, and USA does not overlap Canada).
+
+--------------------------------------------------------------------------------
+6. IN-PROGRESS TASK: INTERACTIVE OPENSTREETMAP (LEAFLET) INTEGRATION
+--------------------------------------------------------------------------------
+Goal:
+Replace or augment the vector SVG map with a real OpenStreetMap (Leaflet) component.
+When the user zooms in on a specific state, county, or city (e.g. Kansas City, Iowa in
+the USA) and draws a circle over that area, the app immediately extracts the geographic
+bounds and requests sub-regional FireCalendar analysis for that exact marked circle.
+
+Architecture of Circle-to-Data Translation:
+1. User Gesture:
+   - User enables the "Circle Area" tool and clicks/drags over Kansas City on OpenStreetMap.
+2. Geodesic Calculation:
+   - Leaflet returns the circle center (center_lat, center_lon) and radius R (in meters/kilometers).
+   - The bounding coordinates are derived:
+       1 degree latitude = roughly 111.32 km.
+       1 degree longitude = roughly 111.32 * cos(center_lat) km.
+       delta_lat = R / 111.32
+       delta_lon = R / (111.32 * cos(center_lat))
+       min_lon = center_lon - delta_lon
+       max_lon = center_lon + delta_lon
+       min_lat = center_lat - delta_lat
+       max_lat = center_lat + delta_lat
+3. API Dispatch:
+   - Frontend issues:
+       GET /api/analysis?country=USA&bbox=-95.0,38.7,-94.1,39.5
+4. Backend Response:
+   - Backend slices only the 25 km cells inside that box, aggregates the 22-year baseline
+     for Kansas City, and returns the response in under 200 ms.
+5. UI Update:
+   - FireCalendar charts, Z-scores, and metrics switch from national view to the local
+     Kansas City area.
+
+--------------------------------------------------------------------------------
+7. CRITICAL CODING CONSTRAINTS & CONVENTIONS
+--------------------------------------------------------------------------------
+1. API Router Consolidation:
+   - All backend API endpoints MUST stay in the single dedicated file:
+     backend/api/routes.py. Do not split endpoints across multiple files.
+2. Text Formatting Rule:
+   - Never use em dashes in explanatory text or UI strings. Use hyphens, commas,
+     or colons instead.
+3. Performance Target:
+   - All spatial queries must remain sub-300 ms using PyArrow predicate pushdown on Parquet data.
+4. Design Aesthetics:
+   - Dark mode default (#0B0F19 slate background).
+   - Glassmorphism surfaces (backdrop-blur-md bg-slate-900/60 border border-slate-800).
+   - Fire theme accents: Warning Amber (#F59E0B), Critical Fire Red (#EF4444),
+     Calibrated Cyan (#06B6D4).
+
+--------------------------------------------------------------------------------
+8. HOW TO RUN AND DEVELOP LOCALLY
+--------------------------------------------------------------------------------
+Start Backend:
+  cd d:\Fire\firecalendar
+  uvicorn backend.main:app --reload --port 8000
+  - API Docs: http://127.0.0.1:8000/docs
+  - Health check: http://127.0.0.1:8000/api/health
+
+Start Frontend:
+  cd d:\Fire\firecalendar\frontend
+  npm run dev
+  - Local URL: http://localhost:5173
+
+Production Build & Verification:
+  cd d:\Fire\firecalendar\frontend
+  npm run build
+  - The compiled files in frontend/dist are automatically served by FastAPI at http://127.0.0.1:8000
+================================================================================
