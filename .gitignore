@@ -18,6 +18,7 @@ __pycache__/
 .ipynb_checkpoints/
 
 .env
+env
 
 .DS_Store
 Thumbs.db
