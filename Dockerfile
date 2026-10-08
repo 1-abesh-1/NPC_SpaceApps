@@ -4,6 +4,8 @@ WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm install
 COPY frontend ./
+ARG VITE_FIRMS_KEY
+ENV VITE_FIRMS_KEY=$VITE_FIRMS_KEY
 RUN npm run build
 
 # Stage 2: Production Python Backend
