@@ -1,13 +1,7 @@
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type PointerEvent as ReactPointerEvent,
-  type WheelEvent,
-} from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import L from "leaflet"
+import "leaflet/dist/leaflet.css"
 import { countries, dayToDate, intersectingCountries } from "../data/fireData"
-import { worldRings } from "../data/worldRings"
 import type { Bounds, CountryProfile, Horizon } from "../types"
 
 type Props = {
@@ -24,37 +18,161 @@ type Props = {
   onHorizon: (horizon: Horizon) => void
 }
 
-type View = { x: number y: number scale: number }
 type ResizeHandle = "nw" | "n" | "ne" | "e" | "se" | "s" | "sw" | "w"
-type DragKind = "pan" | "box" | "resize" | "draw"
+const HANDLES: ResizeHandle[] = ["nw", "n", "ne", "e", "se", "s", "sw", "w"]
+const EPS = 0.0005
 
-const W = 1200
-const H = 640
-const projectX = (longitude: number) => ((longitude + 180) / 360) * W
-const projectY = (latitude: number) => ((90 - latitude) / 180) * H
-const lonFromX = (x: number) => (x / W) * 360 - 180
-const latFromY = (y: number) => 90 - (y / H) * 180
-const clamp = (value: number, min: number, max: number) =>
-  Math.min(max, Math.max(min, value))
-const land = worldRings
+// Backend base URL. Leave empty if Vite proxies /api to the backend,
+// otherwise set VITE_API_BASE=http://localhost:8000 in .env
+const API_BASE = (import.meta.env.VITE_API_BASE as string | undefined) ?? ""
 
-const viewForCountry = (profile: CountryProfile): View => {
-  const centerX = projectX((profile.bounds.west + profile.bounds.east) / 2)
-  const centerY = projectY((profile.bounds.north + profile.bounds.south) / 2)
-  const spanX = Math.max(
-    1,
-    projectX(profile.bounds.east) - projectX(profile.bounds.west),
-  )
-  const spanY = Math.max(
-    1,
-    projectY(profile.bounds.south) - projectY(profile.bounds.north),
-  )
-  const scale = clamp(Math.min(W / (spanX * 2.5), H / (spanY * 2.0)), 1.25, 4.0)
-  return {
-    x: W / 2 - centerX * scale,
-    y: H / 2 - centerY * scale,
-    scale,
+// "World fires" mode draws at most this many dots (strongest by FRP first)
+const MAX_WORLD_POINTS = 10000
+
+// Max AOI size (square degrees) for which we request hotspot points
+const MAX_HOTSPOT_AREA = 400
+
+// Keyless tile sources (Esri public tiles)
+const TILES = {
+  dark: {
+    label: "Dark",
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+    attribution: "Tiles &copy; Esri",
+    maxNativeZoom: 16,
+  },
+  streets: {
+    label: "Streets",
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+    attribution: "Tiles &copy; Esri",
+    maxNativeZoom: 19,
+  },
+  satellite: {
+    label: "Satellite",
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    attribution: "Tiles &copy; Esri",
+    maxNativeZoom: 19,
+  },
+} as const
+type TileKey = keyof typeof TILES
+
+const toLL = (b: Bounds) =>
+  L.latLngBounds([b.south, b.west], [b.north, b.east])
+const fromLL = (b: L.LatLngBounds): Bounds => ({
+  west: b.getWest(),
+  east: b.getEast(),
+  north: b.getNorth(),
+  south: b.getSouth(),
+})
+const handlePos = (b: Bounds, h: ResizeHandle): L.LatLngTuple => [
+  h.includes("n") ? b.north : h.includes("s") ? b.south : (b.north + b.south) / 2,
+  h.includes("w") ? b.west : h.includes("e") ? b.east : (b.west + b.east) / 2,
+]
+const anomalyColor = (a: number) =>
+  a >= 2 ? "#ff3d00" : a >= 1 ? "#ffb300" : "#9aa0a6"
+
+// Country shapes (ISO3 in feature.id). For reliability, download this file into
+// /public and point the URL at "/countries.geo.json".
+const COUNTRY_SHAPES_URL =
+  "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json"
+
+const sameBounds = (a: Bounds, b: Bounds) =>
+  Math.abs(a.west - b.west) < 1e-3 &&
+  Math.abs(a.east - b.east) < 1e-3 &&
+  Math.abs(a.north - b.north) < 1e-3 &&
+  Math.abs(a.south - b.south) < 1e-3
+
+const inBox = (lng: number, lat: number, b: Bounds) =>
+  lng >= b.west && lng <= b.east && lat >= b.south && lat <= b.north
+
+const ringHas = (ring: number[][], x: number, y: number) => {
+  let inside = false
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i]
+    const [xj, yj] = ring[j]
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
+      inside = !inside
+    }
   }
+  return inside
+}
+
+// True if the country's real outline has a point inside the box, or the box
+// center lies inside the country (box fully inside a big country).
+const featureTouchesBox = (feature: any, b: Bounds) => {
+  const g = feature.geometry
+  if (!g) return false
+  const polys: number[][][][] =
+    g.type === "Polygon" ? [g.coordinates] : g.type === "MultiPolygon" ? g.coordinates : []
+  const cx = (b.west + b.east) / 2
+  const cy = (b.south + b.north) / 2
+  return polys.some(
+    (poly) => poly[0].some(([x, y]) => inBox(x, y, b)) || ringHas(poly[0], cx, cy),
+  )
+}
+
+// Reads daily z-scores out of an /api/analysis response, tolerating a few
+// shapes: [{date, z}], {date:[...], z:[...]}, or {"2020-09-14": 1.2}.
+const isoDay = (v: unknown) => {
+  const t = String(v ?? "")
+  return /^\d{4}-\d{2}-\d{2}/.test(t) ? t.slice(0, 10) : ""
+}
+const Z_KEYS = ["z", "zscore", "z_score", "zScore", "anomaly", "sigma"]
+const zKeyOf = (o: any) =>
+  Z_KEYS.find((k) => o?.[k] !== null && o?.[k] !== "" && Number.isFinite(Number(o?.[k]))) ??
+  Object.keys(o ?? {}).find((k) => /^z/i.test(k) && Number.isFinite(Number(o[k])))
+const readDaily = (data: any): Record<string, number> => {
+  const out: Record<string, number> = {}
+  const daily = data?.daily
+  if (Array.isArray(daily)) {
+    daily.forEach((e: any) => {
+      if (!e || typeof e !== "object") return
+      let d = isoDay(e.date ?? e.day ?? e.time ?? e.t)
+      const doy = e.doy ?? e.day_of_year
+      if (!d && e.year && doy) {
+        d = new Date(Date.UTC(Number(e.year), 0, Number(doy))).toISOString().slice(0, 10)
+      }
+      const k = zKeyOf(e)
+      if (d && k) out[d] = Number(e[k])
+    })
+  } else if (daily && typeof daily === "object") {
+    const dates = daily.date ?? daily.dates ?? daily.day
+    const zs = daily.z ?? daily.zscore ?? daily.z_score ?? daily.anomaly
+    if (Array.isArray(dates) && Array.isArray(zs)) {
+      dates.forEach((d: any, i: number) => {
+        const iso = isoDay(d)
+        const z = Number(zs[i])
+        if (iso && Number.isFinite(z)) out[iso] = z
+      })
+    } else {
+      Object.entries(daily).forEach(([k, v]: [string, any]) => {
+        const iso = isoDay(k)
+        if (!iso) return
+        const z = typeof v === "number" ? v : v && zKeyOf(v) ? Number(v[zKeyOf(v)!]) : NaN
+        if (Number.isFinite(z)) out[iso] = z
+      })
+    }
+  }
+  return out
+}
+
+const norm = (s: string) => s.toLowerCase().replace(/[^a-z]/g, "")
+const NAME_ALIASES: Record<string, string> = {
+  unitedstates: "unitedstatesofamerica",
+  tanzania: "unitedrepublicoftanzania",
+  czechia: "czechrepublic",
+  serbia: "republicofserbia",
+  northmacedonia: "macedonia",
+  bahamas: "thebahamas",
+  guineabissau: "guineabissau",
+}
+const matchesCountry = (feature: any, c: CountryProfile) => {
+  const id = String(feature.id ?? "").toUpperCase()
+  if (id && (id === String(c.code).toUpperCase() || id === String(c.id).toUpperCase())) {
+    return true
+  }
+  const fname = norm(String(feature.properties?.name ?? ""))
+  const cname = norm(String(c.name))
+  return fname === cname || fname === NAME_ALIASES[cname]
 }
 
 export default function AoiMap({
@@ -70,78 +188,714 @@ export default function AoiMap({
   onYear,
   onHorizon,
 }: Props) {
-  const groupRef = useRef<SVGGElement>(null)
-  const boxRef = useRef<SVGRectElement>(null)
-  const boxFillRef = useRef<SVGRectElement>(null)
-  const svgRef = useRef<SVGSVGElement>(null)
+  const hostRef = useRef<HTMLDivElement>(null)
+  const mapRef = useRef<L.Map | null>(null)
+  const tileRef = useRef<L.TileLayer | null>(null)
+  const labelRef = useRef<L.TileLayer | null>(null)
+  const cityBorderRef = useRef<L.GeoJSON | null>(null)
+  const rectRef = useRef<L.Rectangle | null>(null)
+  const handleMarkers = useRef<L.Marker[]>([])
+  const shadeRef = useRef<L.GeoJSON | null>(null)
+  const geoRef = useRef<any>(null)
+  const regionRef = useRef<L.LayerGroup | null>(null)
+  const hotspotRef = useRef<L.LayerGroup | null>(null)
+  const hotspotRendererRef = useRef<L.Canvas | null>(null)
+  const allShadeRef = useRef<L.GeoJSON | null>(null)
+  const worldRef = useRef<L.LayerGroup | null>(null)
+  const worldCacheRef = useRef<
+    Map<string, { pts: { lat: number; lng: number; frp: number }[]; total: number }>
+  >(new Map())
+  const applyRef = useRef<(b: Bounds, skip?: number) => void>(() => {})
   const playRef = useRef<number | null>(null)
   const lastCountryRef = useRef(country.id)
-  const handleRefs = useRef<Array<SVGRectElement | null>>([])
-  const dragRef = useRef<{
-    kind: DragKind
-    pointerX: number
-    pointerY: number
-    view: View
-    rect?: { x: number y: number width: number height: number }
-    handle?: ResizeHandle
-  } | null>(null)
-  const [view, setView] = useState<View>({ x: 0, y: 0, scale: 1 })
+
+  // latest props for handlers registered once
+  const boundsRef = useRef(bounds)
+  const onBoundsRef = useRef(onBounds)
+  const onCountryRef = useRef(onCountry)
+  const drawingRef = useRef(false)
+  boundsRef.current = bounds
+  onBoundsRef.current = onBounds
+  onCountryRef.current = onCountry
+
   const [playing, setPlaying] = useState(false)
   const [boxHovered, setBoxHovered] = useState(false)
   const [drawing, setDrawing] = useState(false)
+  const [tileKey, setTileKey] = useState<TileKey>("dark")
+  const [zoom, setZoomState] = useState(2)
+  const [cityQuery, setCityQuery] = useState("")
+  const [cityStatus, setCityStatus] = useState("")
+  const [geoReady, setGeoReady] = useState(false)
+  const [hotspotStatus, setHotspotStatus] = useState("")
+  const [view, setView] = useState<Bounds | null>(null)
+  const [showAll, setShowAll] = useState(false)
+  // iso date (YYYY-MM-DD) -> z-score, per country id
+  const [allDaily, setAllDaily] = useState<Record<string, Record<string, number>>>({})
+  const [allStatus, setAllStatus] = useState("")
+  const [allNote, setAllNote] = useState("")
+  const [worldFires, setWorldFires] = useState(false)
+  const [worldStatus, setWorldStatus] = useState("")
 
-  const box = useMemo(
-    () => ({
-      x: projectX(bounds.west),
-      y: projectY(bounds.north),
-      width: projectX(bounds.east) - projectX(bounds.west),
-      height: projectY(bounds.south) - projectY(bounds.north),
-    }),
-    [bounds],
+  drawingRef.current = drawing
+
+  const showCityBorder = async (name: string) => {
+    const map = mapRef.current
+    const query = name.trim()
+    if (!map || !query) return
+    setCityStatus("Searching…")
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+          query,
+        )}&format=json&polygon_geojson=1&limit=1`,
+      )
+      const results = await res.json()
+      const hit = results?.[0]
+      if (!hit?.geojson) {
+        setCityStatus("No border found")
+        return
+      }
+      cityBorderRef.current?.remove()
+      const layer = L.geoJSON(hit.geojson, {
+        style: { color: "#ffffff", weight: 1.5, fill: false, dashArray: "4 4" },
+        interactive: false,
+      }).addTo(map)
+      cityBorderRef.current = layer
+      map.flyToBounds(layer.getBounds(), { padding: [60, 60] })
+      setCityStatus("")
+    } catch {
+      setCityStatus("Search failed")
+    }
+  }
+
+  const clearCityBorder = () => {
+    cityBorderRef.current?.remove()
+    cityBorderRef.current = null
+    setCityStatus("")
+  }
+
+  // A country preset (e.g. Chile's box) must only mean that country, even though
+  // its rectangle overlaps neighbours. Only custom boxes look at other countries.
+  const isPreset = useMemo(
+    () => country.presets.some((p) => sameBounds(p.bounds, bounds)),
+    [country, bounds],
   )
-  const included = useMemo(() => intersectingCountries(bounds), [bounds])
-  const fireMarks = useMemo(
-    () =>
-      Array.from({ length: 28 }, (_, index) => {
-        const timeSeed = year * 365 + day
-        const xSeed = Math.sin((index + 1) * 12.9898 + timeSeed * 0.173) * 43758.5453
-        const ySeed = Math.sin((index + 1) * 78.233 + timeSeed * 0.097) * 12345.6789
-        const intensity =
-          Math.sin((index + 1) * 4.127 + timeSeed * 0.041) * 0.5 + 0.5
-        const anomalyBand = anomaly >= 2 ? 2 : anomaly >= 1 ? 1 : 0
-        const localAnomaly =
-          anomalyBand === 2
-            ? intensity > 0.58
-              ? 2
-              : intensity > 0.25
-                ? 1
-                : 0
-            : anomalyBand === 1 && intensity > 0.42
-              ? 1
-              : 0
-        const xFraction = xSeed - Math.floor(xSeed)
-        const yFraction = ySeed - Math.floor(ySeed)
-        return {
-          x: box.x + box.width * (0.08 + xFraction * 0.84),
-          y: box.y + box.height * (0.08 + yFraction * 0.84),
-          anomaly: localAnomaly,
-          radius:
-            Math.max(8, Math.min(box.width, box.height) * 0.11) *
-            (0.72 + intensity * 0.72),
+  const included = useMemo(
+    () => (isPreset ? [country] : intersectingCountries(bounds)),
+    [isPreset, country, bounds],
+  )
+  const [shaded, setShaded] = useState<CountryProfile[]>([])
+
+  const selectCountry = (item: CountryProfile) => {
+    onCountry(item)
+    onBounds(item.presets[0].bounds, item.presets[0].name, item.presets[0].multiplier)
+  }
+
+  // ---------- map init (once) ----------
+  useEffect(() => {
+    const host = hostRef.current
+    if (!host) return
+    const map = L.map(host, {
+      center: [20, 0],
+      zoom: 2,
+      minZoom: 2,
+      maxZoom: 19,
+      zoomSnap: 0.25,
+      zoomControl: false,
+      worldCopyJump: true,
+    })
+    mapRef.current = map
+    map.on("zoomend", () => setZoomState(map.getZoom()))
+    const syncView = () => setView(fromLL(map.getBounds()))
+    map.on("moveend", syncView)
+    syncView()
+
+    map.createPane("shadePane").style.zIndex = "340"
+    // fire dots: above country shading, below the AOI box, and click-through
+    // so box dragging / hover card / handles keep working
+    const hotspotPane = map.createPane("hotspotPane")
+    hotspotPane.style.zIndex = "360"
+    hotspotPane.style.pointerEvents = "none"
+    hotspotRendererRef.current = L.canvas({ pane: "hotspotPane" })
+    regionRef.current = L.layerGroup().addTo(map)
+
+    // AOI rectangle
+    const rect = L.rectangle(toLL(boundsRef.current), {
+      color: anomalyColor(0),
+      weight: 2,
+      fillOpacity: 0.08,
+    }).addTo(map)
+    rectRef.current = rect
+    rect.on("mouseover", () => setBoxHovered(true))
+    rect.on("mouseout", () => setBoxHovered(false))
+
+    // 8 resize handles
+    handleMarkers.current = HANDLES.map((h, index) => {
+      const marker = L.marker(handlePos(boundsRef.current, h), {
+        draggable: true,
+        icon: L.divIcon({
+          className: `aoi-handle-icon h-${h}`,
+          iconSize: [12, 12],
+        }),
+      }).addTo(map)
+      let startB = boundsRef.current
+      let cur = startB
+      marker.on("dragstart", () => {
+        startB = { ...boundsRef.current }
+        cur = startB
+      })
+      marker.on("drag", () => {
+        const ll = marker.getLatLng()
+        const b = { ...startB }
+        if (h.includes("w")) b.west = Math.min(ll.lng, startB.east - EPS)
+        if (h.includes("e")) b.east = Math.max(ll.lng, startB.west + EPS)
+        if (h.includes("n")) b.north = Math.max(ll.lat, startB.south + EPS)
+        if (h.includes("s")) b.south = Math.min(ll.lat, startB.north - EPS)
+        cur = b
+        applyRef.current(b, index)
+      })
+      marker.on("dragend", () => onBoundsRef.current(cur, "Custom area", 1))
+      return marker
+    })
+
+    applyRef.current = (b, skip) => {
+      rect.setBounds(toLL(b))
+      handleMarkers.current.forEach((m, i) => {
+        if (i !== skip) m.setLatLng(handlePos(b, HANDLES[i]))
+      })
+    }
+
+    // drag whole box
+    rect.on("mousedown", (e: L.LeafletMouseEvent) => {
+      if (drawingRef.current) return
+      L.DomEvent.stopPropagation(e)
+      map.dragging.disable()
+      const startLL = e.latlng
+      const startB = { ...boundsRef.current }
+      let cur = startB
+      let moved = false
+      const move = (ev: L.LeafletMouseEvent) => {
+        moved = true
+        const dLat = ev.latlng.lat - startLL.lat
+        const dLng = ev.latlng.lng - startLL.lng
+        cur = {
+          north: startB.north + dLat,
+          south: startB.south + dLat,
+          east: startB.east + dLng,
+          west: startB.west + dLng,
         }
-      }),
-    [anomaly, box, day, year],
-  )
+        applyRef.current(cur)
+      }
+      const up = () => {
+        map.off("mousemove", move)
+        document.removeEventListener("mouseup", up)
+        map.dragging.enable()
+        if (moved) onBoundsRef.current(cur, "Custom area", 1)
+      }
+      map.on("mousemove", move)
+      document.addEventListener("mouseup", up)
+    })
 
-  const transformFor = (next: View) =>
-    `translate(${next.x} ${next.y}) scale(${next.scale})`
+    map.fitBounds(toLL(country.presets[0].bounds ?? country.bounds), { animate: false })
 
+    return () => {
+      map.remove()
+      mapRef.current = null
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // ---------- basemap ----------
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+    tileRef.current?.remove()
+    const t = TILES[tileKey]
+    tileRef.current = L.tileLayer(t.url, {
+      attribution: t.attribution,
+      maxZoom: 19,
+      maxNativeZoom: t.maxNativeZoom,
+    }).addTo(map)
+    tileRef.current.bringToBack()
+  }, [tileKey])
+
+  // ---------- labels + borders overlay (satellite only) ----------
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+    labelRef.current?.remove()
+    labelRef.current = null
+    if (tileKey !== "satellite") return
+    labelRef.current = L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+      {
+        maxZoom: 19,
+        maxNativeZoom: 19,
+        attribution: "Tiles &copy; Esri",
+      },
+    ).addTo(map)
+  }, [tileKey])
+
+  // ---------- sync AOI with props ----------
+  useEffect(() => {
+    applyRef.current(bounds)
+  }, [bounds])
+
+  // ---------- fire hotspots (NASA FIRMS) ----------
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+    hotspotRef.current?.remove()
+    hotspotRef.current = null
+
+    // only request the part of the AOI that is on screen
+    const v = view ?? bounds
+    const west = Math.max(bounds.west, v.west, -180)
+    const east = Math.min(bounds.east, v.east, 180)
+    const south = Math.max(bounds.south, v.south, -90)
+    const north = Math.min(bounds.north, v.north, 90)
+    if (east <= west || north <= south) {
+      setHotspotStatus("Selected area is outside the current view")
+      return
+    }
+
+    const area = (east - west) * (north - south)
+    if (area > MAX_HOTSPOT_AREA) {
+      setHotspotStatus("Zoom in to see fire points")
+      return
+    }
+
+    const key = import.meta.env.VITE_FIRMS_KEY
+    if (!key) {
+      setHotspotStatus("Missing VITE_FIRMS_KEY in .env")
+      return
+    }
+
+    const dateObj = new Date(Date.UTC(year, 0, day))
+    const date = dateObj.toISOString().slice(0, 10)
+    const ageDays = (Date.now() - dateObj.getTime()) / 86400000
+    if (ageDays < 0) {
+      setHotspotStatus("No satellite data for future dates")
+      return
+    }
+    // VIIRS starts in 2012, MODIS covers 2003-2011.
+    // NRT = last ~2 months, SP = archived "standard processing".
+    const sensor = year < 2012 ? "MODIS" : "VIIRS_SNPP"
+    const source = `${sensor}_${ageDays < 60 ? "NRT" : "SP"}`
+    const ctrl = new AbortController()
+
+    const t = setTimeout(async () => {
+      try {
+        setHotspotStatus("Loading fire points…")
+        const url = `https://firms.modaps.eosdis.nasa.gov/api/area/csv/${key}/${source}/${west},${south},${east},${north}/1/${date}`
+        const res = await fetch(url, { signal: ctrl.signal })
+        const text = await res.text()
+        const [head, ...rows] = text.trim().split("\n")
+        const cols = head.split(",")
+        const iLat = cols.indexOf("latitude")
+        const iLng = cols.indexOf("longitude")
+        const iFrp = cols.indexOf("frp")
+        if (!res.ok || iLat < 0) {
+          setHotspotStatus(`FIRMS: ${text.trim().slice(0, 60) || "no response"}`)
+          return
+        }
+
+        const renderer = hotspotRendererRef.current ?? undefined
+        const group = L.layerGroup()
+        const used = rows.slice(0, 5000)
+        used.forEach((r) => {
+          const c = r.split(",")
+          const frp = Number(c[iFrp]) || 0
+          L.circleMarker([Number(c[iLat]), Number(c[iLng])], {
+            renderer,
+            interactive: false,
+            radius: Math.min(3 + frp / 20, 9),
+            color: "#ffffff",
+            weight: 0.5,
+            fillColor: "#ff3d00",
+            fillOpacity: 0.85,
+          }).addTo(group)
+        })
+        group.addTo(map)
+        hotspotRef.current = group
+        setHotspotStatus(
+          used.length >= 5000
+            ? "5000+ raw satellite hotspots (zoom in to see all)"
+            : used.length
+              ? `${used.length} raw satellite hotspots (NASA FIRMS)`
+              : "No fire detected in this view on this day",
+        )
+      } catch {
+        if (!ctrl.signal.aborted) setHotspotStatus("Could not load fire points")
+      }
+    }, 400) // debounce while dragging/scrubbing
+
+    return () => {
+      clearTimeout(t)
+      ctrl.abort()
+    }
+  }, [bounds, view, day, year])
+
+  // ---------- load country shapes once ----------
+  useEffect(() => {
+    let cancelled = false
+    fetch(COUNTRY_SHAPES_URL)
+      .then((r) => r.json())
+      .then((data) => {
+        if (cancelled) return
+        geoRef.current = data
+        setGeoReady(true)
+      })
+      .catch(() => {
+        if (!cancelled) setGeoReady(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  // ---------- world-wide fire dots ("World fires" mode) ----------
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+    worldRef.current?.remove()
+    worldRef.current = null
+    if (!worldFires) {
+      setWorldStatus("")
+      return
+    }
+    const key = import.meta.env.VITE_FIRMS_KEY
+    if (!key) {
+      setWorldStatus("Missing VITE_FIRMS_KEY in .env")
+      return
+    }
+    const dateObj = new Date(Date.UTC(year, 0, day))
+    const date = dateObj.toISOString().slice(0, 10)
+    const ageDays = (Date.now() - dateObj.getTime()) / 86400000
+    if (ageDays < 0) {
+      setWorldStatus("No satellite data for future dates")
+      return
+    }
+    const sensor = year < 2012 ? "MODIS" : "VIIRS_SNPP"
+    const source = `${sensor}_${ageDays < 60 ? "NRT" : "SP"}`
+    const cacheKey = `${source}:${date}`
+    const ctrl = new AbortController()
+
+    const draw = (pts: { lat: number; lng: number; frp: number }[], total: number) => {
+      const renderer = hotspotRendererRef.current ?? undefined
+      const group = L.layerGroup()
+      pts.forEach((p) => {
+        L.circleMarker([p.lat, p.lng], {
+          renderer,
+          interactive: false,
+          radius: Math.min(2 + p.frp / 40, 6),
+          color: "#ffffff",
+          weight: 0.3,
+          fillColor: "#ff3d00",
+          fillOpacity: 0.85,
+        }).addTo(group)
+      })
+      group.addTo(map)
+      worldRef.current = group
+      setWorldStatus(
+        total > pts.length
+          ? `${total.toLocaleString()} fires worldwide · strongest ${pts.length.toLocaleString()} shown`
+          : `${total.toLocaleString()} fires worldwide`,
+      )
+    }
+
+    const cached = worldCacheRef.current.get(cacheKey)
+    if (cached) {
+      draw(cached.pts, cached.total)
+      return
+    }
+
+    const t = setTimeout(async () => {
+      try {
+        setWorldStatus("Downloading world fires (can take a few seconds)…")
+        const url = `https://firms.modaps.eosdis.nasa.gov/api/area/csv/${key}/${source}/world/1/${date}`
+        const res = await fetch(url, { signal: ctrl.signal })
+        const text = await res.text()
+        const lines = text.split("\n")
+        const cols = lines[0].split(",")
+        const iLat = cols.indexOf("latitude")
+        const iLng = cols.indexOf("longitude")
+        const iFrp = cols.indexOf("frp")
+        if (!res.ok || iLat < 0 || iLng < 0) {
+          setWorldStatus(`FIRMS: ${text.trim().slice(0, 60) || "no response"}`)
+          return
+        }
+        const all: { lat: number; lng: number; frp: number }[] = []
+        for (let i = 1; i < lines.length; i++) {
+          const c = lines[i].split(",")
+          if (c.length < cols.length) continue
+          all.push({ lat: Number(c[iLat]), lng: Number(c[iLng]), frp: Number(c[iFrp]) || 0 })
+        }
+        const total = all.length
+        const pts =
+          total > MAX_WORLD_POINTS
+            ? all.sort((a, b) => b.frp - a.frp).slice(0, MAX_WORLD_POINTS)
+            : all
+        const cache = worldCacheRef.current
+        cache.set(cacheKey, { pts, total })
+        if (cache.size > 5) cache.delete(cache.keys().next().value as string)
+        if (ctrl.signal.aborted) return
+        draw(pts, total)
+      } catch {
+        if (!ctrl.signal.aborted) setWorldStatus("Could not load world fires")
+      }
+    }, 800) // debounce: each new date is a big download
+
+    return () => {
+      clearTimeout(t)
+      ctrl.abort()
+    }
+  }, [worldFires, day, year])
+
+  // ---------- load anomalies for every country ("All anomalies" mode) ----------
+  useEffect(() => {
+    if (!showAll) {
+      setAllStatus("")
+      return
+    }
+    const missing = countries.filter((c) => !allDaily[c.id])
+    if (!missing.length) return
+    const ctrl = new AbortController()
+    const total = countries.length
+    let done = total - missing.length
+    let failed = 0
+    let lastError = ""
+    setAllStatus(`Loading anomalies ${done}/${total}…`)
+    missing.forEach(async (c) => {
+      try {
+        const iso = /^[A-Za-z]{3}$/.test(String(c.code)) ? String(c.code) : String(c.id)
+        const b = c.presets[0].bounds
+        const qs = new URLSearchParams({
+          country: iso.toUpperCase(),
+          bbox: `${b.west},${b.south},${b.east},${b.north}`,
+          year_from: String(c.firstYear ?? 2003),
+          year_to: String(c.lastYear ?? 2026),
+        })
+        const res = await fetch(`${API_BASE}/api/analysis?${qs}`, { signal: ctrl.signal })
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const text = await res.text()
+        let data: any
+        try {
+          data = JSON.parse(text)
+        } catch {
+          throw new Error("API did not return JSON (set VITE_API_BASE?)")
+        }
+        const byDate = readDaily(data)
+        if (!Object.keys(byDate).length) {
+          failed += 1
+          lastError = "no z-scores found in response"
+          console.warn(
+            "AoiMap: could not read daily z-scores for",
+            iso,
+            "keys:",
+            Object.keys(data ?? {}),
+            "daily sample:",
+            Array.isArray(data?.daily) ? data.daily[0] : data?.daily,
+          )
+        } else {
+          setAllDaily((prev) => ({ ...prev, [c.id]: byDate }))
+        }
+      } catch (err) {
+        if (!ctrl.signal.aborted) {
+          failed += 1
+          lastError = String((err as Error)?.message ?? err)
+          console.warn("AoiMap: anomaly request failed for", c.id, err)
+        }
+      } finally {
+        done += 1
+        if (!ctrl.signal.aborted) {
+          setAllStatus(
+            done < total
+              ? `Loading anomalies ${done}/${total}…`
+              : failed
+                ? `${failed} failed: ${lastError}`
+                : "",
+          )
+        }
+      }
+    })
+    return () => ctrl.abort()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showAll])
+
+  // ---------- shade ALL countries by their anomaly ("All anomalies" mode) ----------
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+    allShadeRef.current?.remove()
+    allShadeRef.current = null
+    setAllNote("")
+    if (!showAll || !geoRef.current) return
+    const iso = new Date(Date.UTC(year, 0, day)).toISOString().slice(0, 10)
+    const features: any[] = []
+    countries.forEach((c) => {
+      if (included.some((i) => i.id === c.id)) return // selected area has its own shading
+      const z = allDaily[c.id]?.[iso]
+      if (z === undefined) return
+      const f = (geoRef.current.features ?? []).find((x: any) => matchesCountry(x, c))
+      if (!f) return
+      features.push({ ...f, properties: { ...f.properties, __z: z, __name: c.name } })
+    })
+    if (!features.length) {
+      if (Object.keys(allDaily).length) setAllNote("No anomaly value for this date in other countries")
+      return
+    }
+    allShadeRef.current = L.geoJSON({ type: "FeatureCollection", features } as any, {
+      pane: "shadePane",
+      style: (f: any) => {
+        const z = f.properties.__z as number
+        const color = anomalyColor(z)
+        return {
+          color,
+          weight: 1,
+          fillColor: color,
+          fillOpacity: z >= 2 ? 0.6 : z >= 1 ? 0.5 : 0.2,
+        }
+      },
+      onEachFeature: (f: any, layer: L.Layer) => {
+        const z = f.properties.__z as number
+        layer.bindTooltip(`${f.properties.__name}: ${z >= 0 ? "+" : ""}${z.toFixed(1)}σ`, {
+          sticky: true,
+        })
+      },
+    }).addTo(map)
+  }, [showAll, allDaily, geoReady, day, year, included])
+
+  // ---------- shade selected countries by anomaly ----------
+  useEffect(() => {
+    const map = mapRef.current
+    const rect = rectRef.current
+    if (!map || !rect) return
+    shadeRef.current?.remove()
+    shadeRef.current = null
+    const color = anomalyColor(anomaly)
+    const candidates = included.length ? included : [country]
+    let features = (geoRef.current?.features ?? []).filter((f: any) =>
+      candidates.some((c) => matchesCountry(f, c)),
+    )
+    if (!isPreset) {
+      features = features.filter((f: any) => featureTouchesBox(f, bounds))
+    }
+    setShaded(
+      features.length
+        ? candidates.filter((c) => features.some((f: any) => matchesCountry(f, c)))
+        : [],
+    )
+    if (features.length) {
+      shadeRef.current = L.geoJSON(
+        { type: "FeatureCollection", features } as any,
+        {
+          pane: "shadePane",
+          interactive: false,
+          style: {
+            color,
+            weight: 1.5,
+            fillColor: color,
+            fillOpacity: anomaly >= 2 ? 0.6 : anomaly >= 1 ? 0.5 : 0.28,
+          },
+        },
+      ).addTo(map)
+      // box becomes a faint selection outline
+      rect.setStyle({ color: "#ffffff", weight: 1, dashArray: "6 6", fillOpacity: 0 })
+    } else {
+      // shapes not loaded / not matched: fall back to coloring the box
+      rect.setStyle({
+        color,
+        weight: 2,
+        dashArray: "",
+        fillColor: color,
+        fillOpacity: 0.3,
+      })
+    }
+  }, [geoReady, included, isPreset, bounds, country, anomaly])
+
+  // ---------- region markers ----------
+  useEffect(() => {
+    const group = regionRef.current
+    if (!group) return
+    group.clearLayers()
+    countries.forEach((item) => {
+      const lat = (item.bounds.north + item.bounds.south) / 2
+      const lng = (item.bounds.west + item.bounds.east) / 2
+      const active = item.id === country.id
+      L.marker([lat, lng], {
+        keyboard: true,
+        title: `Zoom to ${item.name}`,
+        icon: L.divIcon({
+          className: `region-point ${active ? "active" : ""}`,
+          html: `<i class="point-dot"></i><span>${item.code}</span>`,
+          iconSize: [40, 20],
+          iconAnchor: [6, 10],
+        }),
+      })
+        .on("click", (e) => {
+          L.DomEvent.stopPropagation(e)
+          onCountryRef.current(item)
+          onBoundsRef.current(
+            item.presets[0].bounds,
+            item.presets[0].name,
+            item.presets[0].multiplier,
+          )
+        })
+        .addTo(group)
+    })
+  }, [country.id])
+
+  // ---------- fly to country when it changes ----------
   useEffect(() => {
     if (lastCountryRef.current === country.id) return
     lastCountryRef.current = country.id
-    setView(viewForCountry(country))
+    mapRef.current?.flyToBounds(toLL(country.presets[0].bounds), {
+      padding: [60, 60],
+      duration: 0.8,
+    })
   }, [country])
 
+  // ---------- draw-area mode ----------
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !drawing) return
+    map.getContainer().style.cursor = "crosshair"
+    let start: L.LatLng | null = null
+    let cur: Bounds | null = null
+    const down = (e: L.LeafletMouseEvent) => {
+      start = e.latlng
+      map.dragging.disable()
+    }
+    const move = (e: L.LeafletMouseEvent) => {
+      if (!start) return
+      cur = fromLL(L.latLngBounds(start, e.latlng))
+      applyRef.current(cur)
+    }
+    const up = () => {
+      if (!start) return
+      start = null
+      map.dragging.enable()
+      if (cur && cur.east - cur.west > EPS && cur.north - cur.south > EPS) {
+        onBoundsRef.current(cur, "Custom area", 1)
+      } else {
+        applyRef.current(boundsRef.current)
+      }
+      setDrawing(false)
+    }
+    map.on("mousedown", down)
+    map.on("mousemove", move)
+    document.addEventListener("mouseup", up)
+    return () => {
+      map.off("mousedown", down)
+      map.off("mousemove", move)
+      document.removeEventListener("mouseup", up)
+      map.dragging.enable()
+      map.getContainer().style.cursor = ""
+    }
+  }, [drawing])
+
+  // ---------- play timeline ----------
   useEffect(() => {
     if (!playing) return
     playRef.current = window.setInterval(() => {
@@ -152,400 +906,21 @@ export default function AoiMap({
     }
   }, [playing, day, onDay])
 
-  const pointerInSvg = (event: ReactPointerEvent<SVGSVGElement>) => {
-    const rect = svgRef.current?.getBoundingClientRect()
-    if (!rect) return { x: 0, y: 0 }
-    return {
-      x: ((event.clientX - rect.left) / rect.width) * W,
-      y: ((event.clientY - rect.top) / rect.height) * H,
-    }
-  }
-
-  const rectAfterDrag = (
-    kind: Exclude<DragKind, "pan">,
-    initial: { x: number y: number width: number height: number },
-    deltaX: number,
-    deltaY: number,
-    handle?: ResizeHandle,
-  ) => {
-    if (kind === "draw") {
-      const endX = clamp(initial.x + deltaX, 0, W)
-      const endY = clamp(initial.y + deltaY, 0, H)
-      return {
-        x: Math.min(initial.x, endX),
-        y: Math.min(initial.y, endY),
-        width: Math.max(4, Math.abs(endX - initial.x)),
-        height: Math.max(4, Math.abs(endY - initial.y)),
-      }
-    }
-    if (kind === "box") {
-      return {
-        ...initial,
-        x: clamp(initial.x + deltaX, 0, W - initial.width),
-        y: clamp(initial.y + deltaY, 0, H - initial.height),
-      }
-    }
-    let left = initial.x
-    let top = initial.y
-    let right = initial.x + initial.width
-    let bottom = initial.y + initial.height
-    if (handle?.includes("w")) left = clamp(left + deltaX, 0, right - 8)
-    if (handle?.includes("e")) right = clamp(right + deltaX, left + 8, W)
-    if (handle?.includes("n")) top = clamp(top + deltaY, 0, bottom - 8)
-    if (handle?.includes("s")) bottom = clamp(bottom + deltaY, top + 8, H)
-    return { x: left, y: top, width: right - left, height: bottom - top }
-  }
-
-  const applyRect = (next: {
-    x: number
-    y: number
-    width: number
-    height: number
-  }) => {
-    for (const element of [boxRef.current, boxFillRef.current]) {
-      element?.setAttribute("x", String(next.x))
-      element?.setAttribute("y", String(next.y))
-      element?.setAttribute("width", String(next.width))
-      element?.setAttribute("height", String(next.height))
-    }
-    const points = [
-      [next.x, next.y],
-      [next.x + next.width / 2, next.y],
-      [next.x + next.width, next.y],
-      [next.x + next.width, next.y + next.height / 2],
-      [next.x + next.width, next.y + next.height],
-      [next.x + next.width / 2, next.y + next.height],
-      [next.x, next.y + next.height],
-      [next.x, next.y + next.height / 2],
-    ]
-    handleRefs.current.forEach((element, index) => {
-      element?.setAttribute("x", String(points[index][0] - 1.5))
-      element?.setAttribute("y", String(points[index][1] - 1.5))
-    })
-  }
-
-  const onPointerDown = (event: ReactPointerEvent<SVGSVGElement>) => {
-    const point = pointerInSvg(event)
-    const target = event.target as SVGElement
-    const handle = target.dataset.resize as ResizeHandle | undefined
-    const worldPoint = {
-      x: clamp((point.x - view.x) / view.scale, 0, W),
-      y: clamp((point.y - view.y) / view.scale, 0, H),
-    }
-    const kind = handle
-      ? "resize"
-      : target.dataset.aoi === "true"
-        ? "box"
-        : drawing
-          ? "draw"
-          : "pan"
-    event.currentTarget.setPointerCapture(event.pointerId)
-    dragRef.current = {
-      kind,
-      pointerX: point.x,
-      pointerY: point.y,
-      view,
-      rect:
-        kind === "pan"
-          ? undefined
-          : kind === "draw"
-            ? { x: worldPoint.x, y: worldPoint.y, width: 1, height: 1 }
-            : box,
-      handle,
-    }
-    if (groupRef.current) groupRef.current.style.transition = "none"
-  }
-
-  const onPointerMove = (event: ReactPointerEvent<SVGSVGElement>) => {
-    const drag = dragRef.current
-    if (!drag) return
-    const point = pointerInSvg(event)
-    const deltaX = point.x - drag.pointerX
-    const deltaY = point.y - drag.pointerY
-    if (drag.kind === "pan") {
-      groupRef.current?.setAttribute(
-        "transform",
-        transformFor({
-          ...drag.view,
-          x: drag.view.x + deltaX,
-          y: drag.view.y + deltaY,
-        }),
-      )
-      return
-    }
-    if (!drag.rect) return
-    const localDeltaX = deltaX / view.scale
-    const localDeltaY = deltaY / view.scale
-    applyRect(
-      rectAfterDrag(
-        drag.kind,
-        drag.rect,
-        localDeltaX,
-        localDeltaY,
-        drag.handle,
-      ),
-    )
-  }
-
-  const onPointerUp = (event: ReactPointerEvent<SVGSVGElement>) => {
-    const drag = dragRef.current
-    if (!drag) return
-    const point = pointerInSvg(event)
-    const deltaX = point.x - drag.pointerX
-    const deltaY = point.y - drag.pointerY
-    if (drag.kind === "pan") {
-      setView((current) => ({
-        ...current,
-        x: clamp(drag.view.x + deltaX, -W * 1.8, W * 1.8),
-        y: clamp(drag.view.y + deltaY, -H * 1.8, H * 1.8),
-      }))
-    } else if (drag.rect) {
-      const next = rectAfterDrag(
-        drag.kind,
-        drag.rect,
-        deltaX / view.scale,
-        deltaY / view.scale,
-        drag.handle,
-      )
-      onBounds(
-        {
-          west: lonFromX(next.x),
-          east: lonFromX(next.x + next.width),
-          north: latFromY(next.y),
-          south: latFromY(next.y + next.height),
-        },
-        "Custom area",
-        1,
-      )
-      if (drag.kind === "draw") setDrawing(false)
-    }
-    dragRef.current = null
-    if (groupRef.current) groupRef.current.style.transition = ""
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId)
-    }
-  }
-
-  const cancelDrag = () => {
-    dragRef.current = null
-    if (groupRef.current) {
-      groupRef.current.style.transition = ""
-      groupRef.current.setAttribute("transform", transformFor(view))
-    }
-  }
-
-  const onWheel = (event: WheelEvent<SVGSVGElement>) => {
-    event.preventDefault()
-    cancelDrag()
-    setView((current) => ({
-      ...current,
-      scale: clamp(current.scale * (event.deltaY > 0 ? 0.88 : 1.12), 0.65, 4),
-    }))
-  }
-
-  const setZoom = (scale: number) =>
-    setView((current) => ({ ...current, scale: clamp(scale, 0.65, 4) }))
-
-  const selectCountry = (item: CountryProfile) => {
-    lastCountryRef.current = item.id
-    setView(viewForCountry(item))
-    onCountry(item)
-    onBounds(item.presets[0].bounds, item.presets[0].name, item.presets[0].multiplier)
-  }
+  const anomalyKey = anomaly >= 2 ? "critical" : anomaly >= 1 ? "elevated" : "normal"
 
   return (
     <section
       className="primary-map"
       aria-label="Global active fire map"
       data-drawing={drawing}
-      data-zoomed={view.scale > 1.45}
     >
-      <div className="map-dot-grid" />
-      <svg
-        onPointerCancel={cancelDrag}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onWheel={onWheel}
-        ref={svgRef}
-        viewBox={`0 0 ${W} ${H}`}
-      >
-        <defs>
-          <radialGradient id="heat-neutral">
-            <stop
-              offset="0"
-              stopColor="var(--strata-ink-soft)"
-              stopOpacity="0.32"
-            />
-            <stop
-              offset="0.58"
-              stopColor="var(--strata-ink-soft)"
-              stopOpacity="0.12"
-            />
-            <stop
-              offset="1"
-              stopColor="var(--strata-ink-soft)"
-              stopOpacity="0"
-            />
-          </radialGradient>
-          <radialGradient id="heat-elevated">
-            <stop offset="0%" stopColor="#fff3d1" stopOpacity="1" />
-            <stop offset="35%" stopColor="#ffb300" stopOpacity="0.9" />
-            <stop offset="70%" stopColor="#ff5722" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#ff5722" stopOpacity="0" />
-          </radialGradient>
-          <radialGradient id="heat-critical">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-            <stop offset="25%" stopColor="#fff176" stopOpacity="0.95" />
-            <stop offset="55%" stopColor="#ff3d00" stopOpacity="0.88" />
-            <stop offset="85%" stopColor="#b71c1c" stopOpacity="0.5" />
-            <stop offset="100%" stopColor="#b71c1c" stopOpacity="0" />
-          </radialGradient>
-          <filter height="180%" id="heat-soften" width="180%" x="-40%" y="-40%">
-            <feGaussianBlur stdDeviation="3.8" />
-          </filter>
-          <clipPath clipPathUnits="userSpaceOnUse" id="heat-clip">
-            <rect height={box.height} width={box.width} x={box.x} y={box.y} />
-          </clipPath>
-        </defs>
-        <g
-          className="world-group"
-          ref={groupRef}
-          transform={transformFor(view)}
-        >
-          {land.map((points, index) => (
-            <polygon className="world-land" key={index} points={points} />
-          ))}
-          <g
-            className="heat-field"
-            clipPath="url(#heat-clip)"
-            filter="url(#heat-soften)"
-          >
-            {fireMarks.map((mark, index) => (
-              <circle
-                className={`heat-blob anomaly-${mark.anomaly}`}
-                cx={mark.x}
-                cy={mark.y}
-                fill={`url(#${
-                  mark.anomaly === 2
-                    ? "heat-critical"
-                    : mark.anomaly === 1
-                      ? "heat-elevated"
-                      : "heat-neutral"
-                })`}
-                key={`${year}-${day}-${index}`}
-                r={mark.radius}
-              />
-            ))}
-            {anomaly >= 2 && (
-              <rect
-                className="critical-heat-wash"
-                height={box.height}
-                width={box.width}
-                x={box.x}
-                y={box.y}
-              />
-            )}
-          </g>
-          <rect
-            className="aoi-fill"
-            data-anomaly={anomaly >= 2 ? "critical" : anomaly >= 1 ? "elevated" : "normal"}
-            data-aoi="true"
-            height={box.height}
-            onMouseEnter={() => setBoxHovered(true)}
-            onMouseLeave={() => setBoxHovered(false)}
-            ref={boxFillRef}
-            width={box.width}
-            x={box.x}
-            y={box.y}
-          />
-          <rect
-            className="aoi-outline"
-            data-anomaly={anomaly >= 2 ? "critical" : anomaly >= 1 ? "elevated" : "normal"}
-            data-aoi="true"
-            height={box.height}
-            onMouseEnter={() => setBoxHovered(true)}
-            onMouseLeave={() => setBoxHovered(false)}
-            ref={boxRef}
-            width={box.width}
-            x={box.x}
-            y={box.y}
-          />
-          {[
-            ["nw", box.x, box.y],
-            ["n", box.x + box.width / 2, box.y],
-            ["ne", box.x + box.width, box.y],
-            ["e", box.x + box.width, box.y + box.height / 2],
-            ["se", box.x + box.width, box.y + box.height],
-            ["s", box.x + box.width / 2, box.y + box.height],
-            ["sw", box.x, box.y + box.height],
-            ["w", box.x, box.y + box.height / 2],
-          ].map(([handle, x, y], index) => (
-            <rect
-              className="aoi-handle"
-              data-resize={handle}
-              height="3"
-              key={String(handle)}
-              ref={(element) => {
-                handleRefs.current[index] = element
-              }}
-              width="3"
-              x={Number(x) - 1.5}
-              y={Number(y) - 1.5}
-            />
-          ))}
-          {countries.map((item) => {
-            const longitude = (item.bounds.west + item.bounds.east) / 2
-            const latitude = (item.bounds.north + item.bounds.south) / 2
-            const pointX = projectX(longitude)
-            const pointY = projectY(latitude)
-            const active = item.id === country.id
-            return (
-              <g
-                aria-label={`Zoom to ${item.name}`}
-                className={`region-point ${active ? "active" : ""}`}
-                key={item.id}
-                onClick={(event) => {
-                  event.stopPropagation()
-                  selectCountry(item)
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault()
-                    selectCountry(item)
-                  }
-                }}
-                onPointerDown={(event) => event.stopPropagation()}
-                role="button"
-                tabIndex={0}
-              >
-                <circle className="point-hit" cx={pointX} cy={pointY} r="15" />
-                <circle
-                  className="point-core"
-                  cx={pointX}
-                  cy={pointY}
-                  r={active ? 4 : 3}
-                />
-                <circle
-                  className="point-ring"
-                  cx={pointX}
-                  cy={pointY}
-                  r={active ? 10 : 7}
-                />
-                <text x={pointX + 13} y={pointY + 4}>
-                  {item.code}
-                </text>
-              </g>
-            )
-          })}
-        </g>
-      </svg>
+      <div className="leaflet-host" ref={hostRef} />
 
       <div className="aoi-tools strata-chrome">
         <span>Area tool</span>
         <button
           data-active={drawing}
-          onClick={() => setDrawing((value) => !value)}
+          onClick={() => setDrawing((v) => !v)}
           type="button"
         >
           {drawing ? "Cancel drawing" : "Draw area"}
@@ -553,13 +928,64 @@ export default function AoiMap({
         <button
           onClick={() => {
             setDrawing(false)
-            onBounds(country.presets[0].bounds, country.presets[0].name, country.presets[0].multiplier)
-            setView(viewForCountry(country))
+            const p = country.presets[0]
+            onBounds(p.bounds, p.name, p.multiplier)
+            mapRef.current?.flyToBounds(toLL(p.bounds), { padding: [60, 60] })
           }}
           type="button"
         >
           Fit {country.code}
         </button>
+        <button
+          data-active={showAll}
+          onClick={() => setShowAll((v) => !v)}
+          type="button"
+        >
+          {showAll ? "Hide country anomalies" : "Country anomalies"}
+        </button>
+        <button
+          data-active={worldFires}
+          onClick={() => setWorldFires((v) => !v)}
+          type="button"
+        >
+          {worldFires ? "Hide world fires" : "World fires"}
+        </button>
+      </div>
+
+      <div className="basemap-switch strata-chrome">
+        {(Object.keys(TILES) as TileKey[]).map((key) => (
+          <button
+            data-active={tileKey === key}
+            key={key}
+            onClick={() => setTileKey(key)}
+            type="button"
+          >
+            {TILES[key].label}
+          </button>
+        ))}
+        <input
+          aria-label="City border search"
+          onChange={(e) => setCityQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") showCityBorder(cityQuery)
+          }}
+          placeholder="City border…"
+          style={{
+            background: "#1c1c1c",
+            color: "#fff",
+            border: "1px solid var(--strata-line-strong)",
+            borderRadius: "4px",
+            padding: "3px 8px",
+            fontSize: "12px",
+            width: "120px",
+          }}
+          type="text"
+          value={cityQuery}
+        />
+        <button onClick={clearCityBorder} type="button">
+          Clear
+        </button>
+        {cityStatus && <span style={{ fontSize: "11px" }}>{cityStatus}</span>}
       </div>
 
       <div className="map-timebar strata-chrome">
@@ -570,7 +996,12 @@ export default function AoiMap({
           </strong>
         </div>
         <div className="year-selector-pill">
-          <label htmlFor="map-year-select" style={{ fontSize: "9px", textTransform: "uppercase", color: "var(--chip-color)", marginRight: "5px" }}>Year</label>
+          <label
+            htmlFor="map-year-select"
+            style={{ fontSize: "9px", textTransform: "uppercase", color: "var(--chip-color)", marginRight: "5px" }}
+          >
+            Year
+          </label>
           <select
             id="map-year-select"
             value={year}
@@ -587,12 +1018,7 @@ export default function AoiMap({
             }}
           >
             {Array.from(
-              {
-                length:
-                  (country.lastYear ?? 2026) -
-                  (country.firstYear ?? 2003) +
-                  1,
-              },
+              { length: (country.lastYear ?? 2026) - (country.firstYear ?? 2003) + 1 },
               (_, i) => (country.lastYear ?? 2026) - i,
             ).map((y) => (
               <option key={y} value={y} style={{ background: "#111", color: "#fff" }}>
@@ -619,7 +1045,7 @@ export default function AoiMap({
             aria-label="Day of year"
             max="365"
             min="1"
-            onChange={(event) => onDay(Number(event.target.value))}
+            onChange={(e) => onDay(Number(e.target.value))}
             type="range"
             value={day}
           />
@@ -637,18 +1063,10 @@ export default function AoiMap({
             </i>
           ))}
         </div>
-        <button
-          className="map-text-button"
-          onClick={() => setPlaying((value) => !value)}
-          type="button"
-        >
+        <button className="map-text-button" onClick={() => setPlaying((v) => !v)} type="button">
           {playing ? "Pause" : "Play"}
         </button>
-        <button
-          className="map-text-button"
-          onClick={() => onDay(258)}
-          type="button"
-        >
+        <button className="map-text-button" onClick={() => onDay(258)} type="button">
           Reset
         </button>
       </div>
@@ -668,49 +1086,39 @@ export default function AoiMap({
       </div>
 
       <div className="zoom-control strata-chrome">
-        <button
-          aria-label="Zoom in"
-          onClick={() => setZoom(view.scale + 0.35)}
-          type="button"
-        >
+        <button aria-label="Zoom in" onClick={() => mapRef.current?.zoomIn()} type="button">
           +
         </button>
         <input
           aria-label="Map zoom"
-          max="4"
-          min="0.65"
-          onChange={(event) => setZoom(Number(event.target.value))}
-          step="0.05"
+          max="19"
+          min="2"
+          onChange={(e) => mapRef.current?.setZoom(Number(e.target.value))}
+          step="0.25"
           type="range"
-          value={view.scale}
+          value={zoom}
         />
-        <button
-          aria-label="Zoom out"
-          onClick={() => setZoom(view.scale - 0.35)}
-          type="button"
-        >
+        <button aria-label="Zoom out" onClick={() => mapRef.current?.zoomOut()} type="button">
           −
         </button>
       </div>
 
       <button
         className="world-reset strata-chrome"
-        onClick={() => setView({ x: 0, y: 0, scale: 1 })}
+        onClick={() => mapRef.current?.flyTo([20, 0], 2)}
         type="button"
       >
         View world
       </button>
 
       <div
-        className={`aoi-hover-card strata-chrome ${
-          boxHovered ? "visible" : ""
-        }`}
-        data-anomaly={anomaly >= 2 ? "critical" : anomaly >= 1 ? "elevated" : "normal"}
+        className={`aoi-hover-card strata-chrome ${boxHovered ? "visible" : ""}`}
+        data-anomaly={anomalyKey}
       >
         <span>
-          {included.length > 1
-            ? `${included.map((item) => item.name).join(" + ")} / aggregate AOI`
-            : `${included[0]?.name ?? country.name} / selected footprint`}
+          {(shaded.length ? shaded : included).length > 1
+            ? `${(shaded.length ? shaded : included).map((i) => i.name).join(" + ")} / aggregate AOI`
+            : `${(shaded.length ? shaded : included)[0]?.name ?? country.name} / selected footprint`}
         </span>
         <strong>
           {anomaly >= 2
@@ -720,7 +1128,8 @@ export default function AoiMap({
               : `Normal Baseline (${anomaly >= 0 ? "+" : ""}${anomaly.toFixed(1)}σ)`}
         </strong>
         <small>
-          {year} · DOY {String(day).padStart(3, "0")} · {bounds.south.toFixed(1)}° to {bounds.north.toFixed(1)}°
+          {year} · DOY {String(day).padStart(3, "0")} · {bounds.south.toFixed(1)}° to{" "}
+          {bounds.north.toFixed(1)}°
         </small>
       </div>
 
@@ -732,6 +1141,14 @@ export default function AoiMap({
           ))}
         </div>
         <span>High</span>
+        {(allStatus || allNote) && (
+          <span style={{ fontSize: "11px", marginLeft: "10px" }}>{allStatus || allNote}</span>
+        )}
+        {(worldFires ? worldStatus : hotspotStatus) && (
+          <span style={{ fontSize: "11px", marginLeft: "10px" }}>
+            {worldFires ? worldStatus : hotspotStatus}
+          </span>
+        )}
       </div>
     </section>
   )

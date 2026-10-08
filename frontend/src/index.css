@@ -1757,3 +1757,33 @@ button {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+.primary-map { position: relative; overflow: hidden; }
+.primary-map .leaflet-host { position: absolute; inset: 0; background: #111; }
+.primary-map .strata-chrome { z-index: 1000; }
+
+/* AOI handles */
+.aoi-handle-icon {
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 2px;
+  box-sizing: border-box;
+}
+.aoi-handle-icon.h-n, .aoi-handle-icon.h-s { cursor: ns-resize; }
+.aoi-handle-icon.h-e, .aoi-handle-icon.h-w { cursor: ew-resize; }
+.aoi-handle-icon.h-nw, .aoi-handle-icon.h-se { cursor: nwse-resize; }
+.aoi-handle-icon.h-ne, .aoi-handle-icon.h-sw { cursor: nesw-resize; }
+
+/* heat blobs: soft edges */
+.heat-blob { filter: blur(6px); }
+
+/* region pins */
+.region-point { display: flex; align-items: center; gap: 6px; color: #fff; font: 600 11px/1 system-ui; cursor: pointer; }
+.region-point .point-dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,.25); }
+.region-point.active .point-dot { background: #ffb300; box-shadow: 0 0 0 4px rgba(255,179,0,.35); }
+.region-point span { text-shadow: 0 1px 3px #000; }
+
+/* basemap switcher: position it wherever fits your layout */
+.basemap-switch { position: absolute; top: 12px; right: 12px; display: flex; gap: 4px; }
+.basemap-switch button[data-active="true"] { outline: 1px solid var(--strata-line-strong); }
