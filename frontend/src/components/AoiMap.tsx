@@ -194,6 +194,7 @@ export default function AoiMap({
   const labelRef = useRef<L.TileLayer | null>(null)
   const cityBorderRef = useRef<L.GeoJSON | null>(null)
   const rectRef = useRef<L.Rectangle | null>(null)
+  const aoiGroupRef = useRef<L.LayerGroup | null>(null)
   const handleMarkers = useRef<L.Marker[]>([])
   const shadeRef = useRef<L.GeoJSON | null>(null)
   const geoRef = useRef<any>(null)
@@ -214,6 +215,7 @@ export default function AoiMap({
   const onBoundsRef = useRef(onBounds)
   const onCountryRef = useRef(onCountry)
   const drawingRef = useRef(false)
+  const customBoxVisibleRef = useRef(false)
   boundsRef.current = bounds
   onBoundsRef.current = onBounds
   onCountryRef.current = onCountry
@@ -221,6 +223,8 @@ export default function AoiMap({
   const [playing, setPlaying] = useState(false)
   const [boxHovered, setBoxHovered] = useState(false)
   const [drawing, setDrawing] = useState(false)
+  const [customBoxVisible, setCustomBoxVisible] = useState(false)
+  customBoxVisibleRef.current = customBoxVisible
   const [tileKey, setTileKey] = useState<TileKey>("dark")
   const [zoom, setZoomState] = useState(2)
   const [cityQuery, setCityQuery] = useState("")
@@ -287,6 +291,8 @@ export default function AoiMap({
   const [shaded, setShaded] = useState<CountryProfile[]>([])
 
   const selectCountry = (item: CountryProfile) => {
+    setCustomBoxVisible(false)
+    setDrawing(false)
     onCountry(item)
     onBounds(item.presets[0].bounds, item.presets[0].name, item.presets[0].multiplier)
   }
@@ -319,14 +325,20 @@ export default function AoiMap({
     hotspotRendererRef.current = L.canvas({ pane: "hotspotPane" })
     regionRef.current = L.layerGroup().addTo(map)
 
+    // AOI layer group (contains bounding box rectangle and resize handles)
+    const aoiGroup = L.layerGroup()
+    aoiGroupRef.current = aoiGroup
+
     // AOI rectangle
     const rect = L.rectangle(toLL(boundsRef.current), {
       color: anomalyColor(0),
       weight: 2,
       fillOpacity: 0.08,
-    }).addTo(map)
+    }).addTo(aoiGroup)
     rectRef.current = rect
-    rect.on("mouseover", () => setBoxHovered(true))
+    rect.on("mouseover", () => {
+      if (customBoxVisibleRef.current) setBoxHovered(true)
+    })
     rect.on("mouseout", () => setBoxHovered(false))
 
     // 8 resize handles
@@ -337,7 +349,7 @@ export default function AoiMap({
           className: `aoi-handle-icon h-${h}`,
           iconSize: [12, 12],
         }),
-      }).addTo(map)
+      }).addTo(aoiGroup)
       let startB = boundsRef.current
       let cur = startB
       marker.on("dragstart", () => {
@@ -367,7 +379,7 @@ export default function AoiMap({
 
     // drag whole box
     rect.on("mousedown", (e: L.LeafletMouseEvent) => {
-      if (drawingRef.current) return
+      if (drawingRef.current || !customBoxVisibleRef.current) return
       L.DomEvent.stopPropagation(e)
       map.dragging.disable()
       const startLL = e.latlng
@@ -401,6 +413,7 @@ export default function AoiMap({
     return () => {
       map.remove()
       mapRef.current = null
+      aoiGroupRef.current = null
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -436,10 +449,30 @@ export default function AoiMap({
     ).addTo(map)
   }, [tileKey])
 
+  // ---------- sync custom box layer visibility ----------
+  useEffect(() => {
+    const map = mapRef.current
+    const group = aoiGroupRef.current
+    if (!map || !group) return
+    if (customBoxVisible) {
+      if (!map.hasLayer(group)) {
+        group.addTo(map)
+      }
+    } else {
+      if (map.hasLayer(group)) {
+        group.remove()
+      }
+      setBoxHovered(false)
+    }
+  }, [customBoxVisible])
+
   // ---------- sync AOI with props ----------
   useEffect(() => {
     applyRef.current(bounds)
-  }, [bounds])
+    if (isPreset && !drawingRef.current) {
+      setCustomBoxVisible(false)
+    }
+  }, [bounds, isPreset])
 
   // ---------- fire hotspots (NASA FIRMS) ----------
   useEffect(() => {
@@ -835,6 +868,8 @@ export default function AoiMap({
       })
         .on("click", (e) => {
           L.DomEvent.stopPropagation(e)
+          setCustomBoxVisible(false)
+          setDrawing(false)
           onCountryRef.current(item)
           onBoundsRef.current(
             item.presets[0].bounds,
@@ -850,6 +885,8 @@ export default function AoiMap({
   useEffect(() => {
     if (lastCountryRef.current === country.id) return
     lastCountryRef.current = country.id
+    setCustomBoxVisible(false)
+    setDrawing(false)
     mapRef.current?.flyToBounds(toLL(country.presets[0].bounds), {
       padding: [60, 60],
       duration: 0.8,
@@ -878,8 +915,12 @@ export default function AoiMap({
       map.dragging.enable()
       if (cur && cur.east - cur.west > EPS && cur.north - cur.south > EPS) {
         onBoundsRef.current(cur, "Custom area", 1)
+        setCustomBoxVisible(true)
       } else {
         applyRef.current(boundsRef.current)
+        if (isPreset) {
+          setCustomBoxVisible(false)
+        }
       }
       setDrawing(false)
     }
@@ -893,7 +934,7 @@ export default function AoiMap({
       map.dragging.enable()
       map.getContainer().style.cursor = ""
     }
-  }, [drawing])
+  }, [drawing, isPreset])
 
   // ---------- play timeline ----------
   useEffect(() => {
@@ -919,8 +960,18 @@ export default function AoiMap({
       <div className="aoi-tools strata-chrome">
         <span>Area tool</span>
         <button
-          data-active={drawing}
-          onClick={() => setDrawing((v) => !v)}
+          data-active={drawing || customBoxVisible}
+          onClick={() => {
+            if (drawing) {
+              setDrawing(false)
+              if (isPreset) {
+                setCustomBoxVisible(false)
+              }
+            } else {
+              setDrawing(true)
+              setCustomBoxVisible(true)
+            }
+          }}
           type="button"
         >
           {drawing ? "Cancel drawing" : "Draw area"}
@@ -928,6 +979,7 @@ export default function AoiMap({
         <button
           onClick={() => {
             setDrawing(false)
+            setCustomBoxVisible(false)
             const p = country.presets[0]
             onBounds(p.bounds, p.name, p.multiplier)
             mapRef.current?.flyToBounds(toLL(p.bounds), { padding: [60, 60] })
@@ -1112,7 +1164,7 @@ export default function AoiMap({
       </button>
 
       <div
-        className={`aoi-hover-card strata-chrome ${boxHovered ? "visible" : ""}`}
+        className={`aoi-hover-card strata-chrome ${boxHovered && customBoxVisible ? "visible" : ""}`}
         data-anomaly={anomalyKey}
       >
         <span>
