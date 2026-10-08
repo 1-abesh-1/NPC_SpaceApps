@@ -68,9 +68,10 @@ Frontend:
 Deployment and DevOps:
 - Containerization: Multi-stage Dockerfile (Stage 1: Node.js 20 builds React; Stage 2:
   Python 3.11 serves Uvicorn and pre-baked Parquet datasets).
+- Live Production URL: https://firecalendar.onrender.com
 - Process Manager: Procfile (`web: uvicorn backend.main:app --host 0.0.0.0 --port $PORT`)
   for Heroku, Railway, Render, or GCP Cloud Run.
-- Data Footprint: Pre-processed lightweight Parquet grids for 10 countries (~24 MB total),
+- Data Footprint: Pre-processed lightweight Parquet grids for 12+ countries,
   committed to repository under data/processed/countries/.
 
 --------------------------------------------------------------------------------

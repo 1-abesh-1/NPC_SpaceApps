@@ -1,8 +1,14 @@
-# FireCalendar Backend & Data Pipeline
+# FireCalendar: Operational Wildfire Intelligence Platform
+
+[![Live Demo](https://img.shields.io/badge/Live%20App-firecalendar.onrender.com-orange?style=for-the-badge&logo=render)](https://firecalendar.onrender.com)
+[![Status](https://img.shields.io/badge/Status-Live%20on%20Render-brightgreen?style=for-the-badge)](https://firecalendar.onrender.com)
+[![NASA Space Apps 2026](https://img.shields.io/badge/NASA%20Space%20Apps-2026-blue?style=for-the-badge)](https://firecalendar.onrender.com)
+
+**Live Production URL:** [https://firecalendar.onrender.com](https://firecalendar.onrender.com)
 
 **NASA Space Apps Challenge 2026**
 
-FireCalendar is a web application that harmonizes over 23 years of NASA FIRMS satellite active-fire records (MODIS Terra/Aqua 2000–2026 and VIIRS S-NPP 2012–2026) into an interactive burning activity calendar, climatological baseline, and early-warning anomaly detection system.
+FireCalendar is an operational web platform that harmonizes over 23 years of NASA FIRMS satellite active-fire records (MODIS Terra/Aqua 2000-2026 and VIIRS S-NPP 2012-2026) into an interactive burning activity calendar, climatological baseline, and early-warning anomaly detection system.
 
 ---
 
@@ -20,14 +26,14 @@ FireCalendar is a web application that harmonizes over 23 years of NASA FIRMS sa
    - Over the multi-year overlap period (Feb 2012 to Dec 2025), computes:
      $$k = \frac{\sum \text{MODIS Monthly}}{\sum \text{VIIRS Monthly}}$$
    - Typical $k \approx 0.41 - 0.49$, with monthly correlation $r > 0.97$.
-5. **Harmonized Continuous Time Series (2003–2026)**:
+5. **Harmonized Continuous Time Series (2003-2026)**:
    - Prior to Feb 1, 2012: MODIS measured footprint counts.
    - Feb 1, 2012 onwards: VIIRS footprint counts scaled by $k$.
    - Year 2003 marks the first full year with both Terra and Aqua operational.
 6. **Climatological Baseline & Anomaly Detection**:
    - 7-day centered rolling mean for heatmap display.
    - 15-day centered rolling mean for baseline.
-   - Baseline: Day-of-Year (DOY 1–366) mean and standard deviation across 2003–2025.
+   - Baseline: Day-of-Year (DOY 1-366) mean and standard deviation across 2003-2025.
    - Unusual days flagged when $z = \frac{\text{value}_{15} - \text{mean}_{\text{doy}}}{\text{std}_{\text{doy}}} > 2.0$.
 7. **Season Metrics & Critical Periods**:
    - Fire season start (10% cumulative activity), peak (maximum 15-day smoothed), and end (90% cumulative activity).
@@ -37,7 +43,8 @@ FireCalendar is a web application that harmonizes over 23 years of NASA FIRMS sa
 
 ## 2. API Endpoints for React Frontend
 
-Base URL (local): `http://localhost:8000`
+- **Production Live URL:** `https://firecalendar.onrender.com`
+- **Local Dev URL:** `http://localhost:8000`
 
 ### `GET /api/health`
 Health check endpoint.
