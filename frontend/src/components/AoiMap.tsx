@@ -32,6 +32,141 @@ const MAX_WORLD_POINTS = 10000
 // Max AOI size (square degrees) for which we request hotspot points
 const MAX_HOTSPOT_AREA = 400
 
+type ContinentInfo = {
+  id: string
+  name: string
+  bounds: Bounds
+  countryId: string
+}
+
+const CONTINENTS: ContinentInfo[] = [
+  {
+    id: "south-america",
+    name: "South America",
+    bounds: { north: 13.0, south: -56.0, west: -82.0, east: -34.0 },
+    countryId: "argentina",
+  },
+  {
+    id: "north-america",
+    name: "North America",
+    bounds: { north: 72.0, south: 14.0, west: -168.0, east: -52.0 },
+    countryId: "usa",
+  },
+  {
+    id: "europe",
+    name: "Europe",
+    bounds: { north: 71.0, south: 35.0, west: -25.0, east: 40.0 },
+    countryId: "portugal",
+  },
+  {
+    id: "oceania",
+    name: "Oceania",
+    bounds: { north: -10.0, south: -45.0, west: 112.0, east: 180.0 },
+    countryId: "australia",
+  },
+  {
+    id: "africa",
+    name: "Africa",
+    bounds: { north: 37.5, south: -35.0, west: -18.0, east: 52.0 },
+    countryId: "argentina",
+  },
+  {
+    id: "asia",
+    name: "Asia",
+    bounds: { north: 77.0, south: -11.0, west: 26.0, east: 150.0 },
+    countryId: "australia",
+  },
+]
+
+const COUNTRY_TO_CONTINENT: Record<string, string> = {
+  argentina: "south-america",
+  brazil: "south-america",
+  chile: "south-america",
+  paraguay: "south-america",
+  uruguay: "south-america",
+  usa: "north-america",
+  canada: "north-america",
+  greece: "europe",
+  portugal: "europe",
+  australia: "oceania",
+}
+
+// Linear-time Quickselect O(N) to extract top K points by FRP without full sort
+function quickselectTopK<T extends { frp: number }>(arr: T[], k: number): T[] {
+  if (arr.length <= k) return arr
+  let left = 0
+  let right = arr.length - 1
+  while (left < right) {
+    const pivot = arr[right].frp
+    let i = left
+    for (let j = left; j < right; j++) {
+      if (arr[j].frp > pivot) {
+        const temp = arr[i]
+        arr[i] = arr[j]
+        arr[j] = temp
+        i++
+      }
+    }
+    const temp = arr[i]
+    arr[i] = arr[right]
+    arr[right] = temp
+
+    if (i === k) break
+    else if (i < k) left = i + 1
+    else right = i - 1
+  }
+  return arr.slice(0, k)
+}
+
+function parseFirmsCsv(
+  text: string,
+  maxPoints: number,
+): { pts: { lat: number; lng: number; frp: number }[]; total: number } | null {
+  const firstNewline = text.indexOf("\n")
+  if (firstNewline < 0) return null
+  const header = text.slice(0, firstNewline)
+  const cols = header.split(",")
+  const iLat = cols.indexOf("latitude")
+  const iLng = cols.indexOf("longitude")
+  const iFrp = cols.indexOf("frp")
+  if (iLat < 0 || iLng < 0) return null
+
+  const pts: { lat: number; lng: number; frp: number }[] = []
+  let start = firstNewline + 1
+  const len = text.length
+
+  while (start < len) {
+    let end = text.indexOf("\n", start)
+    if (end < 0) end = len
+    const line = text.slice(start, end).trim()
+    start = end + 1
+    if (!line) continue
+
+    let colIdx = 0
+    let cStart = 0
+    let lat = 0
+    let lng = 0
+    let frp = 0
+    for (let i = 0; i <= line.length; i++) {
+      if (i === line.length || line[i] === ",") {
+        const val = line.slice(cStart, i)
+        if (colIdx === iLat) lat = Number(val)
+        else if (colIdx === iLng) lng = Number(val)
+        else if (colIdx === iFrp) frp = Number(val) || 0
+        colIdx++
+        cStart = i + 1
+      }
+    }
+    if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
+      pts.push({ lat, lng, frp })
+    }
+  }
+
+  const total = pts.length
+  const topPts = total > maxPoints ? quickselectTopK(pts, maxPoints) : pts
+  return { pts: topPts, total }
+}
+
 // Keyless tile sources (Esri public tiles)
 const TILES = {
   dark: {
@@ -198,7 +333,6 @@ export default function AoiMap({
   const handleMarkers = useRef<L.Marker[]>([])
   const shadeRef = useRef<L.GeoJSON | null>(null)
   const geoRef = useRef<any>(null)
-  const regionRef = useRef<L.LayerGroup | null>(null)
   const hotspotRef = useRef<L.LayerGroup | null>(null)
   const hotspotRendererRef = useRef<L.Canvas | null>(null)
   const allShadeRef = useRef<L.GeoJSON | null>(null)
@@ -297,6 +431,14 @@ export default function AoiMap({
     onBounds(item.presets[0].bounds, item.presets[0].name, item.presets[0].multiplier)
   }
 
+  const deselectCustomArea = () => {
+    setCustomBoxVisible(false)
+    setDrawing(false)
+    const p = country.presets[0]
+    onBounds(p.bounds, p.name, p.multiplier)
+    mapRef.current?.flyToBounds(toLL(p.bounds), { padding: [60, 60], duration: 0.8 })
+  }
+
   // ---------- map init (once) ----------
   useEffect(() => {
     const host = hostRef.current
@@ -323,7 +465,6 @@ export default function AoiMap({
     hotspotPane.style.zIndex = "360"
     hotspotPane.style.pointerEvents = "none"
     hotspotRendererRef.current = L.canvas({ pane: "hotspotPane" })
-    regionRef.current = L.layerGroup().addTo(map)
 
     // AOI layer group (contains bounding box rectangle and resize handles)
     const aoiGroup = L.layerGroup()
@@ -645,39 +786,29 @@ export default function AoiMap({
 
     const t = setTimeout(async () => {
       try {
-        setWorldStatus("Downloading world fires (can take a few seconds)…")
+        setWorldStatus("Downloading world fires (processing satellite points)…")
         const url = `https://firms.modaps.eosdis.nasa.gov/api/area/csv/${key}/${source}/world/1/${date}`
         const res = await fetch(url, { signal: ctrl.signal })
         const text = await res.text()
-        const lines = text.split("\n")
-        const cols = lines[0].split(",")
-        const iLat = cols.indexOf("latitude")
-        const iLng = cols.indexOf("longitude")
-        const iFrp = cols.indexOf("frp")
-        if (!res.ok || iLat < 0 || iLng < 0) {
+        if (!res.ok) {
           setWorldStatus(`FIRMS: ${text.trim().slice(0, 60) || "no response"}`)
           return
         }
-        const all: { lat: number; lng: number; frp: number }[] = []
-        for (let i = 1; i < lines.length; i++) {
-          const c = lines[i].split(",")
-          if (c.length < cols.length) continue
-          all.push({ lat: Number(c[iLat]), lng: Number(c[iLng]), frp: Number(c[iFrp]) || 0 })
+        const parsed = parseFirmsCsv(text, MAX_WORLD_POINTS)
+        if (!parsed) {
+          setWorldStatus(`FIRMS: ${text.trim().slice(0, 60) || "no response"}`)
+          return
         }
-        const total = all.length
-        const pts =
-          total > MAX_WORLD_POINTS
-            ? all.sort((a, b) => b.frp - a.frp).slice(0, MAX_WORLD_POINTS)
-            : all
+        const { pts, total } = parsed
         const cache = worldCacheRef.current
         cache.set(cacheKey, { pts, total })
-        if (cache.size > 5) cache.delete(cache.keys().next().value as string)
+        if (cache.size > 50) cache.delete(cache.keys().next().value as string)
         if (ctrl.signal.aborted) return
         draw(pts, total)
       } catch {
         if (!ctrl.signal.aborted) setWorldStatus("Could not load world fires")
       }
-    }, 800) // debounce: each new date is a big download
+    }, 200) // Fast 200ms debounce: instant feel with high-performance parsing
 
     return () => {
       clearTimeout(t)
@@ -847,40 +978,6 @@ export default function AoiMap({
     }
   }, [geoReady, included, isPreset, bounds, country, anomaly])
 
-  // ---------- region markers ----------
-  useEffect(() => {
-    const group = regionRef.current
-    if (!group) return
-    group.clearLayers()
-    countries.forEach((item) => {
-      const lat = (item.bounds.north + item.bounds.south) / 2
-      const lng = (item.bounds.west + item.bounds.east) / 2
-      const active = item.id === country.id
-      L.marker([lat, lng], {
-        keyboard: true,
-        title: `Zoom to ${item.name}`,
-        icon: L.divIcon({
-          className: `region-point ${active ? "active" : ""}`,
-          html: `<i class="point-dot"></i><span>${item.code}</span>`,
-          iconSize: [40, 20],
-          iconAnchor: [6, 10],
-        }),
-      })
-        .on("click", (e) => {
-          L.DomEvent.stopPropagation(e)
-          setCustomBoxVisible(false)
-          setDrawing(false)
-          onCountryRef.current(item)
-          onBoundsRef.current(
-            item.presets[0].bounds,
-            item.presets[0].name,
-            item.presets[0].multiplier,
-          )
-        })
-        .addTo(group)
-    })
-  }, [country.id])
-
   // ---------- fly to country when it changes ----------
   useEffect(() => {
     if (lastCountryRef.current === country.id) return
@@ -976,6 +1073,16 @@ export default function AoiMap({
         >
           {drawing ? "Cancel drawing" : "Draw area"}
         </button>
+        {customBoxVisible && (
+          <button
+            className="aoi-deselect-btn"
+            onClick={deselectCustomArea}
+            title="Deselect custom area and refit country"
+            type="button"
+          >
+            ✕ Deselect area
+          </button>
+        )}
         <button
           onClick={() => {
             setDrawing(false)
@@ -1123,18 +1230,31 @@ export default function AoiMap({
         </button>
       </div>
 
-      <div className="region-picker strata-chrome">
-        <span>Region</span>
-        {countries.map((item) => (
-          <button
-            data-active={item.id === country.id}
-            key={item.id}
-            onClick={() => selectCountry(item)}
-            type="button"
-          >
-            {item.code}
-          </button>
-        ))}
+      <div className="continent-bar strata-chrome">
+        <span>Continent</span>
+        {CONTINENTS.map((item) => {
+          const isActive = COUNTRY_TO_CONTINENT[country.id] === item.id
+          return (
+            <button
+              data-active={isActive}
+              key={item.id}
+              onClick={() => {
+                const targetCountry = countries.find((c) => c.id === item.countryId)
+                if (targetCountry && targetCountry.id !== country.id) {
+                  selectCountry(targetCountry)
+                }
+                mapRef.current?.flyToBounds(toLL(item.bounds), {
+                  padding: [40, 40],
+                  duration: 0.9,
+                })
+              }}
+              title={`Zoom to ${item.name}`}
+              type="button"
+            >
+              {item.name}
+            </button>
+          )
+        })}
       </div>
 
       <div className="zoom-control strata-chrome">
@@ -1167,6 +1287,18 @@ export default function AoiMap({
         className={`aoi-hover-card strata-chrome ${boxHovered && customBoxVisible ? "visible" : ""}`}
         data-anomaly={anomalyKey}
       >
+        <button
+          aria-label="Deselect custom area"
+          className="aoi-card-close"
+          onClick={(e) => {
+            e.stopPropagation()
+            deselectCustomArea()
+          }}
+          title="Deselect area"
+          type="button"
+        >
+          ✕
+        </button>
         <span>
           {(shaded.length ? shaded : included).length > 1
             ? `${(shaded.length ? shaded : included).map((i) => i.name).join(" + ")} / aggregate AOI`

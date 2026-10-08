@@ -302,6 +302,138 @@ button {
   justify-content: space-between;
 }
 
+.entity-picker-control {
+  display: grid;
+  gap: 5px;
+  position: relative;
+}
+
+.searchable-country-box {
+  position: relative;
+}
+
+.country-select-trigger {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--strata-ink);
+  cursor: pointer;
+  display: inline-flex;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 200;
+  letter-spacing: -0.2px;
+  outline: 0;
+  padding: 2px 0;
+  text-align: left;
+}
+
+.country-select-trigger:hover .trigger-country-name {
+  color: #ff3d00;
+}
+
+.trigger-arrow {
+  color: var(--strata-ink-soft);
+  font-size: 12px;
+}
+
+.country-search-dropdown {
+  background: var(--strata-panel, #18181b);
+  border: 1px solid var(--strata-line-strong, #3f3f46);
+  border-radius: 6px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.7), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  left: 0;
+  margin-top: 6px;
+  min-width: 280px;
+  padding: 8px;
+  position: absolute;
+  top: 100%;
+  z-index: 2000;
+}
+
+.search-input-wrapper {
+  align-items: center;
+  background: #111;
+  border: 1px solid var(--strata-line-strong, #333);
+  border-radius: 4px;
+  display: flex;
+  gap: 6px;
+  padding: 6px 10px;
+}
+
+.search-icon {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.country-search-input {
+  background: transparent;
+  border: 0;
+  color: #fff;
+  flex: 1;
+  font-size: 13px;
+  outline: 0;
+}
+
+.clear-search-btn {
+  background: transparent;
+  border: 0;
+  color: #888;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 0 2px;
+}
+
+.clear-search-btn:hover {
+  color: #fff;
+}
+
+.country-options-list {
+  list-style: none;
+  margin: 6px 0 0 0;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.country-option-item {
+  align-items: center;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 10px;
+  transition: background 120ms ease;
+}
+
+.country-option-item:hover,
+.country-option-item.selected {
+  background: rgba(255, 61, 0, 0.15);
+}
+
+.country-option-item.selected .option-name {
+  color: #ff3d00;
+  font-weight: 600;
+}
+
+.option-name {
+  color: #eee;
+  font-size: 13px;
+}
+
+.option-code {
+  color: #888;
+  font-family: monospace;
+  font-size: 11px;
+}
+
+.country-option-empty {
+  color: #888;
+  font-size: 12px;
+  padding: 10px;
+  text-align: center;
+}
+
 .entity-picker-row label {
   display: grid;
   gap: 5px;
@@ -431,7 +563,8 @@ button {
 .preset-list button,
 .micro-segment button,
 .compact-segment button,
-.region-picker button {
+.region-picker button,
+.continent-bar button {
   background: transparent;
   border: 0;
   border-radius: 2px;
@@ -451,7 +584,8 @@ button {
 .preset-list button:hover,
 .micro-segment button[data-active="true"],
 .compact-segment button[data-active="true"],
-.region-picker button[data-active="true"] {
+.region-picker button[data-active="true"],
+.continent-bar button[data-active="true"] {
   background: var(--chip-active-bg);
   color: var(--chip-active-color);
 }
@@ -1294,7 +1428,8 @@ button {
   padding: 5px 8px;
 }
 
-.region-picker {
+.region-picker,
+.continent-bar {
   bottom: 17px;
   display: flex;
   flex-wrap: wrap;
@@ -1308,7 +1443,8 @@ button {
   z-index: 5;
 }
 
-.region-picker > span {
+.region-picker > span,
+.continent-bar > span {
   align-self: center;
   color: var(--chip-color);
   font-family: "Jura", sans-serif;
@@ -1405,6 +1541,18 @@ button {
 .data-level-4 { background: var(--data-4); }
 .data-level-5 { background: #a61f1f; }
 
+.aoi-tools button.aoi-deselect-btn {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #ff6b6b;
+  font-weight: 600;
+}
+
+.aoi-tools button.aoi-deselect-btn:hover {
+  background: #ef4444;
+  color: #fff;
+}
+
 .aoi-hover-card {
   display: grid;
   left: 50%;
@@ -1419,7 +1567,28 @@ button {
 
 .aoi-hover-card.visible {
   opacity: 1;
+  pointer-events: auto;
   transform: translate(-50%, -50%);
+}
+
+.aoi-card-close {
+  background: transparent;
+  border: 0;
+  border-radius: 3px;
+  color: #bbb;
+  cursor: pointer;
+  font-size: 11px;
+  line-height: 1;
+  padding: 2px 5px;
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  z-index: 10;
+}
+
+.aoi-card-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
 }
 
 .aoi-hover-card span,

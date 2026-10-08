@@ -116,28 +116,113 @@ export default function IntelligencePanel({
     [active, data.current],
   )
 
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  const pickerRef = useRef<HTMLDivElement>(null)
+
+  const filteredCountries = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase()
+    if (!q) return countries
+    return countries.filter(
+      (c) =>
+        c.name.toLowerCase().includes(q) ||
+        c.code.toLowerCase().includes(q) ||
+        c.id.toLowerCase().includes(q),
+    )
+  }, [searchQuery])
+
+  useEffect(() => {
+    if (searchOpen) {
+      searchInputRef.current?.focus()
+    }
+  }, [searchOpen])
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
+        setSearchOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
   return (
     <div className="left-panel-content">
       <section className="data-section entity-section">
-        <div className="entity-picker-row">
-          <label>
+        <div className="entity-picker-row" ref={pickerRef}>
+          <div className="entity-picker-control">
             <span className="section-kicker">Active observation area</span>
-            <select
-              onChange={(event) => {
-                const next = countries.find(
-                  (item) => item.id === event.target.value,
-                )
-                if (next) onCountry(next)
-              }}
-              value={country.id}
-            >
-              {countries.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
-          </label>
+            <div className="searchable-country-box">
+              <button
+                aria-expanded={searchOpen}
+                aria-haspopup="listbox"
+                className="country-select-trigger"
+                onClick={() => setSearchOpen((prev) => !prev)}
+                type="button"
+              >
+                <span className="trigger-country-name">{country.name}</span>
+                <span className="trigger-arrow">▾</span>
+              </button>
+
+              {searchOpen && (
+                <div className="country-search-dropdown strata-chrome">
+                  <div className="search-input-wrapper">
+                    <span className="search-icon">🔍</span>
+                    <input
+                      aria-label="Search countries"
+                      className="country-search-input"
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && filteredCountries.length > 0) {
+                          onCountry(filteredCountries[0])
+                          setSearchOpen(false)
+                          setSearchQuery("")
+                        } else if (e.key === "Escape") {
+                          setSearchOpen(false)
+                        }
+                      }}
+                      placeholder="Search country or code (e.g. Argentina, PRT)..."
+                      ref={searchInputRef}
+                      type="text"
+                      value={searchQuery}
+                    />
+                    {searchQuery && (
+                      <button
+                        className="clear-search-btn"
+                        onClick={() => setSearchQuery("")}
+                        type="button"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                  <ul className="country-options-list" role="listbox">
+                    {filteredCountries.map((item) => (
+                      <li
+                        aria-selected={item.id === country.id}
+                        className={`country-option-item ${item.id === country.id ? "selected" : ""}`}
+                        key={item.id}
+                        onClick={() => {
+                          onCountry(item)
+                          setSearchOpen(false)
+                          setSearchQuery("")
+                        }}
+                        role="option"
+                      >
+                        <span className="option-name">{item.name}</span>
+                        <span className="option-code">{item.code}</span>
+                      </li>
+                    ))}
+                    {filteredCountries.length === 0 && (
+                      <li className="country-option-empty">No countries match "{searchQuery}"</li>
+                    )}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
           <span className="taxonomy-badge">{country.code} / LAND AREA</span>
         </div>
 
