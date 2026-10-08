@@ -4,9 +4,9 @@ import type { CountryProfile, DashboardData } from "../types"
 import ClimatologyChart from "./ClimatologyChart"
 
 type Props = {
-  country: CountryProfile
+  country: CountryProfile | null
   data: DashboardData
-  onCountry: (country: CountryProfile) => void
+  onCountry: (country: CountryProfile | null) => void
   onPreset: (index: number) => void
   onIntegrity: () => void
 }
@@ -98,10 +98,12 @@ export default function IntelligencePanel({
   const percentage = Math.round(
     ((active.count - active.mean) / active.mean) * 100,
   )
+  const seasonPeak = country?.seasonPeak ?? 220
+  const seasonWidth = country?.seasonWidth ?? 45
   const seasonStart =
-    ((country.seasonPeak - country.seasonWidth * 1.35 + 364) % 365) + 1
+    ((seasonPeak - seasonWidth * 1.35 + 364) % 365) + 1
   const seasonEnd =
-    ((country.seasonPeak + country.seasonWidth * 1.35 - 1) % 365) + 1
+    ((seasonPeak + seasonWidth * 1.35 - 1) % 365) + 1
 
   const forecast = useMemo(
     () =>
@@ -162,7 +164,9 @@ export default function IntelligencePanel({
                 onClick={() => setSearchOpen((prev) => !prev)}
                 type="button"
               >
-                <span className="trigger-country-name">{country.name}</span>
+                <span className="trigger-country-name">
+                  {country ? country.name : "Select country… (180 available)"}
+                </span>
                 <span className="trigger-arrow">▾</span>
               </button>
 
@@ -199,10 +203,24 @@ export default function IntelligencePanel({
                     )}
                   </div>
                   <ul className="country-options-list" role="listbox">
+                    <li
+                      aria-selected={!country}
+                      className={`country-option-item ${!country ? "selected" : ""}`}
+                      key="__world__"
+                      onClick={() => {
+                        onCountry(null)
+                        setSearchOpen(false)
+                        setSearchQuery("")
+                      }}
+                      role="option"
+                    >
+                      <span className="option-name">🌍 Worldwide Overview</span>
+                      <span className="option-code">WLD</span>
+                    </li>
                     {filteredCountries.map((item) => (
                       <li
-                        aria-selected={item.id === country.id}
-                        className={`country-option-item ${item.id === country.id ? "selected" : ""}`}
+                        aria-selected={item.id === country?.id}
+                        className={`country-option-item ${item.id === country?.id ? "selected" : ""}`}
                         key={item.id}
                         onClick={() => {
                           onCountry(item)
@@ -223,28 +241,34 @@ export default function IntelligencePanel({
               )}
             </div>
           </div>
-          <span className="taxonomy-badge">{country.code} / LAND AREA</span>
+          <span className="taxonomy-badge">
+            {country ? `${country.code} / LAND AREA` : "WORLDWIDE / SATELLITE OBSERVATION"}
+          </span>
         </div>
 
         {/* High-Visibility Early Warning Banner */}
-        <div className={`early-warning-banner anomaly-${anomalyLevel}`}>
+        <div className={`early-warning-banner anomaly-${country ? anomalyLevel : 0}`}>
           <div className="warning-banner-icon">
-            {anomalyLevel === 2 ? "🚨" : anomalyLevel === 1 ? "⚠️" : "🟢"}
+            {!country ? "🛰️" : anomalyLevel === 2 ? "🚨" : anomalyLevel === 1 ? "⚠️" : "🟢"}
           </div>
           <div className="warning-banner-content">
             <div className="warning-banner-title">
-              {anomalyLevel === 2
-                ? "CRITICAL FIRE ANOMALY ACTIVE"
-                : anomalyLevel === 1
-                  ? "ELEVATED FIRE ACTIVITY DETECTED"
-                  : "NORMAL SEASONAL BASELINE"}
+              {!country
+                ? "GLOBAL SATELLITE MONITORING ACTIVE"
+                : anomalyLevel === 2
+                  ? "CRITICAL FIRE ANOMALY ACTIVE"
+                  : anomalyLevel === 1
+                    ? "ELEVATED FIRE ACTIVITY DETECTED"
+                    : "NORMAL SEASONAL BASELINE"}
             </div>
             <div className="warning-banner-desc">
-              {anomalyLevel === 2
-                ? `Observations are ${active.zScore >= 0 ? "+" : ""}${active.zScore.toFixed(1)}σ above 20-year baseline — extreme wildfire emergency!`
-                : anomalyLevel === 1
-                  ? `Activity is ${active.zScore >= 0 ? "+" : ""}${active.zScore.toFixed(1)}σ above normal seasonal expectations.`
-                  : `Fire count is within historical 20-year baseline bounds (${active.zScore >= 0 ? "+" : ""}${active.zScore.toFixed(1)}σ).`}
+              {!country
+                ? "Select any country from the search bar or click directly on the map to inspect localized fire risk, seasonal baseline, and satellite hotspots."
+                : anomalyLevel === 2
+                  ? `Observations are ${active.zScore >= 0 ? "+" : ""}${active.zScore.toFixed(1)}σ above 20-year baseline — extreme wildfire emergency!`
+                  : anomalyLevel === 1
+                    ? `Activity is ${active.zScore >= 0 ? "+" : ""}${active.zScore.toFixed(1)}σ above normal seasonal expectations.`
+                    : `Fire count is within historical 20-year baseline bounds (${active.zScore >= 0 ? "+" : ""}${active.zScore.toFixed(1)}σ).`}
             </div>
           </div>
         </div>
@@ -254,9 +278,9 @@ export default function IntelligencePanel({
           <span>harmonized daily detections</span>
         </div>
         <div className="status-line">
-          <span className={`status-badge anomaly-${anomalyLevel}`}>
+          <span className={`status-badge anomaly-${country ? anomalyLevel : 0}`}>
             <i />
-            {anomalyLabel}
+            {country ? anomalyLabel : "Global overview"}
           </span>
           <p>
             <b>
@@ -268,17 +292,19 @@ export default function IntelligencePanel({
               : "above the 20-year seasonal baseline"}
           </p>
         </div>
-        <div className="preset-list">
-          {country.presets.map((preset, index) => (
-            <button
-              key={preset.name}
-              onClick={() => onPreset(index)}
-              type="button"
-            >
-              {preset.name}
-            </button>
-          ))}
-        </div>
+        {country?.presets && country.presets.length > 0 && (
+          <div className="preset-list">
+            {country.presets.map((preset, index) => (
+              <button
+                key={preset.name}
+                onClick={() => onPreset(index)}
+                type="button"
+              >
+                {preset.name}
+              </button>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="data-section">
@@ -362,7 +388,7 @@ export default function IntelligencePanel({
             <h2>Fire season window</h2>
           </div>
           <span className="plain-meta">
-            Peak {dayToDate(country.seasonPeak)}
+            Peak {dayToDate(seasonPeak)}
           </span>
         </div>
         <div className="season-track">
@@ -377,7 +403,7 @@ export default function IntelligencePanel({
         </div>
         <p className="section-note">
           The selected region’s critical period spans approximately{" "}
-          {Math.round(country.seasonWidth * 2.7)} days. Values are illustrative
+          {Math.round(seasonWidth * 2.7)} days. Values are illustrative
           and not an operational alert.
         </p>
       </section>

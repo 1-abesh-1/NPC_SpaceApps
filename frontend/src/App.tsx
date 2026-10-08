@@ -5,6 +5,7 @@ import CommandBar from "./components/CommandBar"
 import HistoricalCalendar from "./components/HistoricalCalendar"
 import IntelligencePanel from "./components/IntelligencePanel"
 import {
+  WORLD_PROFILE,
   countries,
   generateAreaDashboardData,
   rowsForHorizon,
@@ -14,15 +15,15 @@ import type { Bounds, CountryProfile, DashboardData, Horizon, ThemeId } from "./
 
 export default function App() {
   const shellRef = useRef<HTMLDivElement>(null)
-  const resizeRef = useRef<{ start: number width: number } | null>(null)
-  const [country, setCountry] = useState<CountryProfile>(countries[0])
+  const resizeRef = useRef<{ start: number; width: number } | null>(null)
+  const [country, setCountry] = useState<CountryProfile | null>(null)
   const [horizon, setHorizon] = useState<Horizon>(23)
   const [day, setDay] = useState(258)
   const [year, setYear] = useState<number>(2024)
   const [theme, setTheme] = useState<ThemeId>(() =>
     localStorage.getItem("firecalendar-theme") === "paper" ? "paper" : "ember",
   )
-  const [bounds, setBounds] = useState<Bounds>(countries[0].presets[0].bounds)
+  const [bounds, setBounds] = useState<Bounds>({ north: 85, south: -85, west: -180, east: 180 })
   const [aoiMultiplier, setAoiMultiplier] = useState(1)
   const [calibrationOpen, setCalibrationOpen] = useState(false)
   const [backendData, setBackendData] = useState<DashboardData | null>(null)
@@ -35,6 +36,10 @@ export default function App() {
 
   // Fetch real trust calibration metrics for current country
   useEffect(() => {
+    if (!country) {
+      setBackendTrust(null)
+      return
+    }
     let active = true
     fetchBackendTrust(country.code)
       .then((trust) => {
@@ -47,10 +52,14 @@ export default function App() {
     return () => {
       active = false
     }
-  }, [country.code])
+  }, [country?.code])
 
   // Fetch real backend analysis for selected country and bounding box
   useEffect(() => {
+    if (!country) {
+      setBackendData(null)
+      return
+    }
     const controller = new AbortController()
     const timer = setTimeout(() => {
       fetchBackendAnalysis(country.code, bounds, day, controller.signal)
@@ -68,10 +77,11 @@ export default function App() {
       clearTimeout(timer)
       controller.abort()
     }
-  }, [country.code, bounds, day])
+  }, [country?.code, bounds, day])
 
   // Enhanced country profile with live measured k and r
   const activeCountry = useMemo(() => {
+    if (!country) return null
     if (!backendTrust) return country
     return {
       ...country,
@@ -82,9 +92,11 @@ export default function App() {
 
   // Use real backend data if loaded, otherwise fallback to local generator
   const data = useMemo(() => {
-    const source = (backendData && backendData.current.length >= 365)
-      ? backendData
-      : generateAreaDashboardData(activeCountry, bounds, aoiMultiplier)
+    const effectiveProfile = activeCountry || WORLD_PROFILE
+    const source =
+      backendData && backendData.current.length >= 365
+        ? backendData
+        : generateAreaDashboardData(effectiveProfile, bounds, aoiMultiplier)
 
     // Find the row for the selected year
     const yearRow = source.rows.find((r) => r[0].year === year) || source.current
@@ -104,13 +116,18 @@ export default function App() {
   )
 
   const handleCountry = useCallback(
-    (next: typeof country) => {
+    (next: CountryProfile | null) => {
       setCountry(next)
-      setBounds(next.presets[0].bounds)
-      setAoiMultiplier(next.presets[0].multiplier)
-      const maxYear = next.lastYear ?? 2024
-      if (year > maxYear) {
-        setYear(maxYear)
+      if (next) {
+        setBounds(next.presets[0]?.bounds ?? next.bounds)
+        setAoiMultiplier(next.presets[0]?.multiplier ?? 1)
+        const maxYear = next.lastYear ?? 2026
+        if (year > maxYear) {
+          setYear(maxYear)
+        }
+      } else {
+        setBounds({ north: 85, south: -85, west: -180, east: 180 })
+        setAoiMultiplier(1)
       }
     },
     [year],
@@ -125,6 +142,7 @@ export default function App() {
   )
 
   const handlePreset = (index: number) => {
+    if (!country) return
     const preset = country.presets[index]
     setBounds(preset.bounds)
     setAoiMultiplier(preset.multiplier)
@@ -207,7 +225,7 @@ export default function App() {
         </div>
       </main>
       <CalibrationDialog
-        country={activeCountry}
+        country={activeCountry || WORLD_PROFILE}
         onClose={() => setCalibrationOpen(false)}
         open={calibrationOpen}
       />

@@ -1,17 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
-import { countries, dayToDate, intersectingCountries } from "../data/fireData"
+import { CONTINENTS, countries, dayToDate, intersectingCountries } from "../data/fireData"
+import worldGeoJson from "../data/countries.geo.json"
 import type { Bounds, CountryProfile, Horizon } from "../types"
 
 type Props = {
   anomaly: number
-  country: CountryProfile
+  country: CountryProfile | null
   bounds: Bounds
   horizon: Horizon
   day: number
   year: number
-  onCountry: (country: CountryProfile) => void
+  onCountry: (country: CountryProfile | null) => void
   onBounds: (bounds: Bounds, preset?: string, multiplier?: number) => void
   onDay: (day: number) => void
   onYear: (year: number) => void
@@ -31,65 +32,6 @@ const MAX_WORLD_POINTS = 10000
 
 // Max AOI size (square degrees) for which we request hotspot points
 const MAX_HOTSPOT_AREA = 400
-
-type ContinentInfo = {
-  id: string
-  name: string
-  bounds: Bounds
-  countryId: string
-}
-
-const CONTINENTS: ContinentInfo[] = [
-  {
-    id: "south-america",
-    name: "South America",
-    bounds: { north: 13.0, south: -56.0, west: -82.0, east: -34.0 },
-    countryId: "argentina",
-  },
-  {
-    id: "north-america",
-    name: "North America",
-    bounds: { north: 72.0, south: 14.0, west: -168.0, east: -52.0 },
-    countryId: "usa",
-  },
-  {
-    id: "europe",
-    name: "Europe",
-    bounds: { north: 71.0, south: 35.0, west: -25.0, east: 40.0 },
-    countryId: "portugal",
-  },
-  {
-    id: "oceania",
-    name: "Oceania",
-    bounds: { north: -10.0, south: -45.0, west: 112.0, east: 180.0 },
-    countryId: "australia",
-  },
-  {
-    id: "africa",
-    name: "Africa",
-    bounds: { north: 37.5, south: -35.0, west: -18.0, east: 52.0 },
-    countryId: "argentina",
-  },
-  {
-    id: "asia",
-    name: "Asia",
-    bounds: { north: 77.0, south: -11.0, west: 26.0, east: 150.0 },
-    countryId: "australia",
-  },
-]
-
-const COUNTRY_TO_CONTINENT: Record<string, string> = {
-  argentina: "south-america",
-  brazil: "south-america",
-  chile: "south-america",
-  paraguay: "south-america",
-  uruguay: "south-america",
-  usa: "north-america",
-  canada: "north-america",
-  greece: "europe",
-  portugal: "europe",
-  australia: "oceania",
-}
 
 // Linear-time Quickselect O(N) to extract top K points by FRP without full sort
 function quickselectTopK<T extends { frp: number }>(arr: T[], k: number): T[] {
@@ -332,7 +274,7 @@ export default function AoiMap({
   const aoiGroupRef = useRef<L.LayerGroup | null>(null)
   const handleMarkers = useRef<L.Marker[]>([])
   const shadeRef = useRef<L.GeoJSON | null>(null)
-  const geoRef = useRef<any>(null)
+  const geoRef = useRef<any>(worldGeoJson)
   const hotspotRef = useRef<L.LayerGroup | null>(null)
   const hotspotRendererRef = useRef<L.Canvas | null>(null)
   const allShadeRef = useRef<L.GeoJSON | null>(null)
@@ -342,7 +284,7 @@ export default function AoiMap({
   >(new Map())
   const applyRef = useRef<(b: Bounds, skip?: number) => void>(() => {})
   const playRef = useRef<number | null>(null)
-  const lastCountryRef = useRef(country.id)
+  const lastCountryRef = useRef<string | null>(country?.id ?? null)
 
   // latest props for handlers registered once
   const boundsRef = useRef(bounds)
@@ -354,6 +296,7 @@ export default function AoiMap({
   onBoundsRef.current = onBounds
   onCountryRef.current = onCountry
 
+  const [activeContinent, setActiveContinent] = useState<string | null>(null)
   const [playing, setPlaying] = useState(false)
   const [boxHovered, setBoxHovered] = useState(false)
   const [drawing, setDrawing] = useState(false)
@@ -363,7 +306,7 @@ export default function AoiMap({
   const [zoom, setZoomState] = useState(2)
   const [cityQuery, setCityQuery] = useState("")
   const [cityStatus, setCityStatus] = useState("")
-  const [geoReady, setGeoReady] = useState(false)
+  const [geoReady, setGeoReady] = useState(true)
   const [hotspotStatus, setHotspotStatus] = useState("")
   const [view, setView] = useState<Bounds | null>(null)
   const [showAll, setShowAll] = useState(false)
@@ -415,11 +358,11 @@ export default function AoiMap({
   // A country preset (e.g. Chile's box) must only mean that country, even though
   // its rectangle overlaps neighbours. Only custom boxes look at other countries.
   const isPreset = useMemo(
-    () => country.presets.some((p) => sameBounds(p.bounds, bounds)),
+    () => Boolean(country?.presets?.some((p) => sameBounds(p.bounds, bounds))),
     [country, bounds],
   )
   const included = useMemo(
-    () => (isPreset ? [country] : intersectingCountries(bounds)),
+    () => (isPreset && country ? [country] : intersectingCountries(bounds)),
     [isPreset, country, bounds],
   )
   const [shaded, setShaded] = useState<CountryProfile[]>([])
@@ -434,9 +377,6 @@ export default function AoiMap({
   const deselectCustomArea = () => {
     setCustomBoxVisible(false)
     setDrawing(false)
-    const p = country.presets[0]
-    onBounds(p.bounds, p.name, p.multiplier)
-    mapRef.current?.flyToBounds(toLL(p.bounds), { padding: [60, 60], duration: 0.8 })
   }
 
   // ---------- map init (once) ----------
@@ -549,7 +489,54 @@ export default function AoiMap({
       document.addEventListener("mouseup", up)
     })
 
-    map.fitBounds(toLL(country.presets[0].bounds ?? country.bounds), { animate: false })
+    // Interactive base layer allowing clicking and hovering any country on Earth
+    L.geoJSON(worldGeoJson as any, {
+      pane: "shadePane",
+      style: {
+        color: "rgba(255, 255, 255, 0.12)",
+        weight: 0.8,
+        fillColor: "#ffffff",
+        fillOpacity: 0.01,
+      },
+      onEachFeature: (feature, layer) => {
+        const name = feature.properties?.name || feature.id
+        layer.bindTooltip(name, { sticky: true })
+        layer.on({
+          mouseover: (e) => {
+            if (drawingRef.current) return
+            const l = e.target as L.Path
+            l.setStyle({
+              weight: 1.5,
+              color: "rgba(255, 120, 50, 0.8)",
+              fillColor: "rgba(255, 120, 50, 0.15)",
+              fillOpacity: 0.15,
+            })
+          },
+          mouseout: (e) => {
+            if (drawingRef.current) return
+            const l = e.target as L.Path
+            l.setStyle({
+              weight: 0.8,
+              color: "rgba(255, 255, 255, 0.12)",
+              fillColor: "#ffffff",
+              fillOpacity: 0.01,
+            })
+          },
+          click: (e) => {
+            if (drawingRef.current) return
+            L.DomEvent.stopPropagation(e)
+            const match = countries.find(
+              (c) =>
+                c.code === feature.id ||
+                c.name.toLowerCase() === (feature.properties?.name || "").toLowerCase(),
+            )
+            if (match) {
+              selectCountry(match)
+            }
+          },
+        })
+      },
+    }).addTo(map)
 
     return () => {
       map.remove()
@@ -937,6 +924,10 @@ export default function AoiMap({
     if (!map || !rect) return
     shadeRef.current?.remove()
     shadeRef.current = null
+    if (!country) {
+      setShaded([])
+      return
+    }
     const color = anomalyColor(anomaly)
     const candidates = included.length ? included : [country]
     let features = (geoRef.current?.features ?? []).filter((f: any) =>
@@ -980,11 +971,15 @@ export default function AoiMap({
 
   // ---------- fly to country when it changes ----------
   useEffect(() => {
+    if (!country) {
+      lastCountryRef.current = null
+      return
+    }
     if (lastCountryRef.current === country.id) return
     lastCountryRef.current = country.id
     setCustomBoxVisible(false)
     setDrawing(false)
-    mapRef.current?.flyToBounds(toLL(country.presets[0].bounds), {
+    mapRef.current?.flyToBounds(toLL(country.presets[0]?.bounds ?? country.bounds), {
       padding: [60, 60],
       duration: 0.8,
     })
@@ -1077,24 +1072,37 @@ export default function AoiMap({
           <button
             className="aoi-deselect-btn"
             onClick={deselectCustomArea}
-            title="Deselect custom area and refit country"
+            title="Deselect custom area"
             type="button"
           >
             ✕ Deselect area
           </button>
         )}
-        <button
-          onClick={() => {
-            setDrawing(false)
-            setCustomBoxVisible(false)
-            const p = country.presets[0]
-            onBounds(p.bounds, p.name, p.multiplier)
-            mapRef.current?.flyToBounds(toLL(p.bounds), { padding: [60, 60] })
-          }}
-          type="button"
-        >
-          Fit {country.code}
-        </button>
+        {country ? (
+          <button
+            onClick={() => {
+              setDrawing(false)
+              setCustomBoxVisible(false)
+              const p = country.presets[0]
+              onBounds(p.bounds, p.name, p.multiplier)
+              mapRef.current?.flyToBounds(toLL(p.bounds), { padding: [60, 60] })
+            }}
+            type="button"
+          >
+            Fit {country.code}
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              setDrawing(false)
+              setCustomBoxVisible(false)
+              mapRef.current?.setView([20, 0], 2)
+            }}
+            type="button"
+          >
+            Fit World
+          </button>
+        )}
         <button
           data-active={showAll}
           onClick={() => setShowAll((v) => !v)}
@@ -1177,8 +1185,8 @@ export default function AoiMap({
             }}
           >
             {Array.from(
-              { length: (country.lastYear ?? 2026) - (country.firstYear ?? 2003) + 1 },
-              (_, i) => (country.lastYear ?? 2026) - i,
+              { length: ((country?.lastYear ?? 2026) - (country?.firstYear ?? 2003) + 1) },
+              (_, i) => (country?.lastYear ?? 2026) - i,
             ).map((y) => (
               <option key={y} value={y} style={{ background: "#111", color: "#fff" }}>
                 {y}
@@ -1233,22 +1241,21 @@ export default function AoiMap({
       <div className="continent-bar strata-chrome">
         <span>Continent</span>
         {CONTINENTS.map((item) => {
-          const isActive = COUNTRY_TO_CONTINENT[country.id] === item.id
+          const isActive = activeContinent === item.id
           return (
             <button
               data-active={isActive}
               key={item.id}
               onClick={() => {
-                const targetCountry = countries.find((c) => c.id === item.countryId)
-                if (targetCountry && targetCountry.id !== country.id) {
-                  selectCountry(targetCountry)
-                }
+                setActiveContinent(item.id)
+                setCustomBoxVisible(false)
+                setDrawing(false)
                 mapRef.current?.flyToBounds(toLL(item.bounds), {
-                  padding: [40, 40],
-                  duration: 0.9,
+                  padding: [20, 20],
+                  duration: 1.0,
                 })
               }}
-              title={`Zoom to ${item.name}`}
+              title={`Cover ${item.name}`}
               type="button"
             >
               {item.name}
@@ -1302,7 +1309,7 @@ export default function AoiMap({
         <span>
           {(shaded.length ? shaded : included).length > 1
             ? `${(shaded.length ? shaded : included).map((i) => i.name).join(" + ")} / aggregate AOI`
-            : `${(shaded.length ? shaded : included)[0]?.name ?? country.name} / selected footprint`}
+            : `${(shaded.length ? shaded : included)[0]?.name ?? (country?.name ?? "Custom area")} / selected footprint`}
         </span>
         <strong>
           {anomaly >= 2

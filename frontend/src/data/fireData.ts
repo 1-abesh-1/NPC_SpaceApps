@@ -4,19 +4,87 @@ import type {
   DailyRecord,
   DashboardData,
   Horizon,
+  Preset,
   Severity,
 } from "../types"
+import worldGeoJson from "./countries.geo.json"
 
-export const countries: CountryProfile[] = [
+export type ContinentInfo = {
+  id: string
+  name: string
+  bounds: Bounds
+}
+
+export const CONTINENTS: ContinentInfo[] = [
   {
-    id: "argentina",
-    name: "Argentina",
-    code: "ARG",
-    bounds: { north: -21.8, south: -55.1, west: -73.6, east: -53.6 },
+    id: "africa",
+    name: "Africa",
+    bounds: { north: 37.5, south: -35.5, west: -19.0, east: 52.0 },
+  },
+  {
+    id: "asia",
+    name: "Asia",
+    bounds: { north: 78.0, south: -11.5, west: 26.0, east: 180.0 },
+  },
+  {
+    id: "europe",
+    name: "Europe",
+    bounds: { north: 71.5, south: 34.5, west: -25.0, east: 45.0 },
+  },
+  {
+    id: "north-america",
+    name: "North America",
+    bounds: { north: 72.0, south: 7.0, west: -168.0, east: -52.0 },
+  },
+  {
+    id: "south-america",
+    name: "South America",
+    bounds: { north: 13.0, south: -56.0, west: -82.0, east: -34.0 },
+  },
+  {
+    id: "oceania",
+    name: "Oceania",
+    bounds: { north: 0.0, south: -48.0, west: 110.0, east: 180.0 },
+  },
+  {
+    id: "antarctica",
+    name: "Antarctica",
+    bounds: { north: -60.0, south: -85.0, west: -180.0, east: 180.0 },
+  },
+]
+
+export const WORLD_PROFILE: CountryProfile = {
+  id: "world",
+  name: "Worldwide Overview",
+  code: "WLD",
+  bounds: { north: 85, south: -85, west: -180, east: 180 },
+  presets: [
+    {
+      name: "Global",
+      bounds: { north: 85, south: -85, west: -180, east: 180 },
+      multiplier: 1.0,
+    },
+  ],
+  seasonPeak: 220,
+  seasonWidth: 60,
+  intensity: 15000,
+  currentAnomaly: 0.8,
+  correlation: 0.99,
+  calibration: 2.4,
+  firstYear: 2003,
+  lastYear: 2026,
+}
+
+type CalibratedOverride = Partial<CountryProfile> & {
+  presets?: Preset[]
+}
+
+const CALIBRATED_OVERRIDES: Record<string, CalibratedOverride> = {
+  ARG: {
     presets: [
       {
         name: "Overview",
-        bounds: { north: -31.4, south: -45.5, west: -68.5, east: -58.7 },
+        bounds: { north: -21.8, south: -55.1, west: -73.6, east: -53.6 },
         multiplier: 1.0,
       },
       {
@@ -44,15 +112,11 @@ export const countries: CountryProfile[] = [
     firstYear: 2003,
     lastYear: 2026,
   },
-  {
-    id: "australia",
-    name: "Australia",
-    code: "AUS",
-    bounds: { north: -10, south: -44, west: 112, east: 154 },
+  AUS: {
     presets: [
       {
         name: "Overview",
-        bounds: { north: -15.0, south: -39.0, west: 118.0, east: 148.0 },
+        bounds: { north: -10, south: -44, west: 112, east: 154 },
         multiplier: 1.0,
       },
       {
@@ -80,15 +144,11 @@ export const countries: CountryProfile[] = [
     firstYear: 2003,
     lastYear: 2024,
   },
-  {
-    id: "brazil",
-    name: "Brazil",
-    code: "BRA",
-    bounds: { north: 5.3, south: -33.8, west: -73.9, east: -34.8 },
+  BRA: {
     presets: [
       {
         name: "Overview",
-        bounds: { north: -7.5, south: -21.0, west: -63.0, east: -45.7 },
+        bounds: { north: 5.3, south: -33.8, west: -73.9, east: -34.8 },
         multiplier: 1.0,
       },
       {
@@ -116,15 +176,11 @@ export const countries: CountryProfile[] = [
     firstYear: 2003,
     lastYear: 2024,
   },
-  {
-    id: "chile",
-    name: "Chile",
-    code: "CHL",
-    bounds: { north: -17.5, south: -55.9, west: -75.7, east: -66.4 },
+  CHL: {
     presets: [
       {
         name: "Overview",
-        bounds: { north: -30.0, south: -43.4, west: -74.5, east: -67.6 },
+        bounds: { north: -17.5, south: -55.9, west: -75.7, east: -66.4 },
         multiplier: 1.0,
       },
       {
@@ -152,15 +208,11 @@ export const countries: CountryProfile[] = [
     firstYear: 2003,
     lastYear: 2024,
   },
-  {
-    id: "paraguay",
-    name: "Paraguay",
-    code: "PRY",
-    bounds: { north: -19.3, south: -27.6, west: -62.7, east: -54.2 },
+  PRY: {
     presets: [
       {
         name: "Overview",
-        bounds: { north: -19.9, south: -27.0, west: -62.0, east: -54.9 },
+        bounds: { north: -19.3, south: -27.6, west: -62.7, east: -54.2 },
         multiplier: 1.0,
       },
       {
@@ -188,15 +240,11 @@ export const countries: CountryProfile[] = [
     firstYear: 2003,
     lastYear: 2024,
   },
-  {
-    id: "uruguay",
-    name: "Uruguay",
-    code: "URY",
-    bounds: { north: -30, south: -35.1, west: -58.5, east: -53.1 },
+  URY: {
     presets: [
       {
         name: "Overview",
-        bounds: { north: -30.2, south: -34.9, west: -58.2, east: -53.4 },
+        bounds: { north: -30, south: -35.1, west: -58.5, east: -53.1 },
         multiplier: 1.0,
       },
       {
@@ -224,15 +272,11 @@ export const countries: CountryProfile[] = [
     firstYear: 2003,
     lastYear: 2024,
   },
-  {
-    id: "usa",
-    name: "United States",
-    code: "USA",
-    bounds: { north: 49.4, south: 24.5, west: -125.0, east: -66.9 },
+  USA: {
     presets: [
       {
         name: "Overview",
-        bounds: { north: 45.0, south: 28.9, west: -115.0, east: -76.9 },
+        bounds: { north: 49.4, south: 24.5, west: -125.0, east: -66.9 },
         multiplier: 1.0,
       },
       {
@@ -265,15 +309,11 @@ export const countries: CountryProfile[] = [
     firstYear: 2003,
     lastYear: 2024,
   },
-  {
-    id: "canada",
-    name: "Canada",
-    code: "CAN",
-    bounds: { north: 69.0, south: 42.0, west: -141.0, east: -52.6 },
+  CAN: {
     presets: [
       {
         name: "Overview",
-        bounds: { north: 65.0, south: 46.0, west: -125.0, east: -68.6 },
+        bounds: { north: 69.0, south: 42.0, west: -141.0, east: -52.6 },
         multiplier: 1.0,
       },
       {
@@ -301,15 +341,11 @@ export const countries: CountryProfile[] = [
     firstYear: 2003,
     lastYear: 2024,
   },
-  {
-    id: "greece",
-    name: "Greece",
-    code: "GRC",
-    bounds: { north: 41.8, south: 34.8, west: 19.4, east: 28.3 },
+  GRC: {
     presets: [
       {
         name: "Overview",
-        bounds: { north: 41.5, south: 35.1, west: 20.0, east: 27.7 },
+        bounds: { north: 41.8, south: 34.8, west: 19.4, east: 28.3 },
         multiplier: 1.0,
       },
       {
@@ -337,15 +373,11 @@ export const countries: CountryProfile[] = [
     firstYear: 2003,
     lastYear: 2024,
   },
-  {
-    id: "portugal",
-    name: "Portugal",
-    code: "PRT",
-    bounds: { north: 42.2, south: 36.9, west: -9.6, east: -6.1 },
+  PRT: {
     presets: [
       {
         name: "Overview",
-        bounds: { north: 42.1, south: 37.0, west: -9.5, east: -6.2 },
+        bounds: { north: 42.2, south: 36.9, west: -9.6, east: -6.1 },
         multiplier: 1.0,
       },
       {
@@ -373,7 +405,114 @@ export const countries: CountryProfile[] = [
     firstYear: 2003,
     lastYear: 2024,
   },
-]
+  COD: {
+    presets: [
+      {
+        name: "Overview",
+        bounds: { north: 5.4, south: -13.5, west: 12.2, east: 31.3 },
+        multiplier: 1.0,
+      },
+    ],
+    seasonPeak: 195,
+    seasonWidth: 50,
+    intensity: 2200,
+    currentAnomaly: 2.6,
+    correlation: 0.977,
+    calibration: 0.36,
+    firstYear: 2003,
+    lastYear: 2024,
+  },
+  AGO: {
+    presets: [
+      {
+        name: "Overview",
+        bounds: { north: -4.4, south: -18.0, west: 11.6, east: 24.1 },
+        multiplier: 1.0,
+      },
+    ],
+    seasonPeak: 200,
+    seasonWidth: 46,
+    intensity: 1950,
+    currentAnomaly: 2.8,
+    correlation: 0.985,
+    calibration: 0.435,
+    firstYear: 2003,
+    lastYear: 2024,
+  },
+}
+
+function computeBoundsFromGeometry(geometry: any): Bounds {
+  let minLng = 180
+  let maxLng = -180
+  let minLat = 90
+  let maxLat = -90
+
+  const processCoord = (lng: number, lat: number) => {
+    if (lng < minLng) minLng = lng
+    if (lng > maxLng) maxLng = lng
+    if (lat < minLat) minLat = lat
+    if (lat > maxLat) maxLat = lat
+  }
+
+  const traverse = (coords: any) => {
+    if (!Array.isArray(coords) || coords.length === 0) return
+    if (typeof coords[0] === "number" && typeof coords[1] === "number") {
+      processCoord(coords[0], coords[1])
+    } else {
+      for (let i = 0; i < coords.length; i++) {
+        traverse(coords[i])
+      }
+    }
+  }
+
+  traverse(geometry?.coordinates)
+
+  if (minLng > maxLng || minLat > maxLat) {
+    return { north: 10, south: -10, west: -10, east: 10 }
+  }
+
+  return {
+    north: Number(maxLat.toFixed(4)),
+    south: Number(minLat.toFixed(4)),
+    west: Number(minLng.toFixed(4)),
+    east: Number(maxLng.toFixed(4)),
+  }
+}
+
+// Dynamically generate all 180 countries from the global GeoJSON
+export const countries: CountryProfile[] = (worldGeoJson.features as any[])
+  .map((feature) => {
+    const code = String(feature.id || "").toUpperCase()
+    const name = String(feature.properties?.name || code)
+    const id = (code || name).toLowerCase().replace(/[^a-z0-9]/g, "-")
+    const geomBounds = computeBoundsFromGeometry(feature.geometry)
+    const calibrated = CALIBRATED_OVERRIDES[code] || {}
+    const bounds = calibrated.bounds || geomBounds
+    const centerLat = (bounds.north + bounds.south) / 2
+
+    return {
+      id,
+      name,
+      code,
+      bounds,
+      presets: calibrated.presets || [
+        {
+          name: "Overview",
+          bounds,
+          multiplier: 1.0,
+        },
+      ],
+      seasonPeak: calibrated.seasonPeak ?? (centerLat >= 0 ? 215 : 260),
+      seasonWidth: calibrated.seasonWidth ?? 45,
+      intensity: calibrated.intensity ?? 1200,
+      currentAnomaly: calibrated.currentAnomaly ?? 1.2,
+      correlation: calibrated.correlation ?? 0.98,
+      calibration: calibrated.calibration ?? 2.4,
+      firstYear: calibrated.firstYear ?? 2003,
+      lastYear: calibrated.lastYear ?? 2026,
+    }
+  })
+  .sort((a, b) => a.name.localeCompare(b.name))
 
 const wrapDistance = (day: number, peak: number) => {
   const difference = Math.abs(day - peak)
@@ -400,25 +539,33 @@ const historicalAnomaly = (
   year: number,
   day: number,
 ) => {
-  const nearPeak =
-    wrapDistance(day, profile.seasonPeak) < profile.seasonWidth * 0.48
-  if (!nearPeak) return 0
-  if (profile.id === "australia" && (year === 2019 || year === 2020)) return 1.4
-  if ((profile.id === "brazil" || profile.id === "paraguay") && year === 2020)
-    return 1.65
-  if (profile.id === "chile" && year === 2017) return 1.1
-  if (year === 2012 || year === 2023) return 0.48
-  return 0
+  const distance = wrapDistance(day, profile.seasonPeak)
+  if (distance > profile.seasonWidth) return 0
+  const normalized = 1 - distance / profile.seasonWidth
+
+  if (year === 2024 && (profile.id === "argentina" || profile.id === "brazil")) {
+    return 0.85 * normalized
+  }
+  if (year === 2020 && (profile.id === "chile" || profile.id === "argentina")) {
+    return 0.95 * normalized
+  }
+  if (year === 2023 && (profile.id === "canada" || profile.id === "greece")) {
+    return 1.4 * normalized
+  }
+  if (year === 2019 && profile.id === "australia") {
+    return 1.2 * normalized
+  }
+  if (year === 2017 && profile.id === "portugal") {
+    return 1.35 * normalized
+  }
+  return (Math.sin(year * 17 + day * 0.05) > 0.7 ? 0.35 : -0.15) * normalized
 }
 
-export const areaKm2 = (bounds: Bounds) => {
-  const radius = 6371
-  const lat1 = (bounds.south * Math.PI) / 180
-  const lat2 = (bounds.north * Math.PI) / 180
-  const deltaLon = ((bounds.east - bounds.west) * Math.PI) / 180
-  return Math.abs(
-    radius * radius * deltaLon * (Math.sin(lat2) - Math.sin(lat1)),
-  )
+const areaKm2 = (bounds: Bounds) => {
+  const latDelta = Math.max(0.1, bounds.north - bounds.south)
+  const lonDelta = Math.max(0.1, bounds.east - bounds.west)
+  const meanLat = ((bounds.north + bounds.south) / 2) * (Math.PI / 180)
+  return latDelta * 111 * (lonDelta * 111 * Math.cos(meanLat))
 }
 
 export const generateDashboardData = (
