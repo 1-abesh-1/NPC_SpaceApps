@@ -4,7 +4,7 @@ WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm install
 COPY frontend ./
-ARG VITE_FIRMS_KEY
+ARG VITE_FIRMS_KEY=3190f953a2198c880c77c74397f9c6ce
 ENV VITE_FIRMS_KEY=$VITE_FIRMS_KEY
 RUN npm run build
 

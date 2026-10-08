@@ -80,8 +80,8 @@ export default function ClimatologyChart({ records }: Props) {
     <div className="chart-block">
       <div className="chart-title-row">
         <div>
-          <span className="eyebrow">Climatology comparison</span>
-          <h3>Daily footprint progression</h3>
+          <span className="eyebrow">Harmonized Envelope</span>
+          <h3>Daily progression</h3>
         </div>
         <div className="chart-legend">
           <span>

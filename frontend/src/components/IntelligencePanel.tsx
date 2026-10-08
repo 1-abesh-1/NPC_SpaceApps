@@ -105,13 +105,16 @@ export default function IntelligencePanel({
   const seasonEnd =
     ((seasonPeak + seasonWidth * 1.35 - 1) % 365) + 1
 
+  const [outlookMetric, setOutlookMetric] = useState<"index" | "count">("index")
+
   const forecast = useMemo(
     () =>
       [0, 14, 28, 42, 56, 70, 84].map((offset) => {
         const record = data.current[(active.day + offset - 1) % 365]
         return {
           label: dayToDate(record.day).split(" ")[0],
-          value: Math.max(0, Math.min(1, record.count / (active.count * 1.05))),
+          value: Math.max(0, Math.min(1, record.count / Math.max(1, active.count * 1.05))),
+          count: record.count,
           severity: record.severity,
         }
       }),
@@ -287,9 +290,11 @@ export default function IntelligencePanel({
               {active.zScore >= 0 ? "+" : ""}
               {active.zScore.toFixed(1)}σ
             </b>{" "}
-            {anomalyLevel === 0
-              ? "within the 20-year seasonal baseline"
-              : "above the 20-year seasonal baseline"}
+            {active.zScore >= 1
+              ? "above the 20-year seasonal baseline"
+              : active.zScore <= -1
+                ? "below the 20-year seasonal baseline"
+                : "within normal 20-year seasonal baseline"}
           </p>
         </div>
         {country?.presets && country.presets.length > 0 && (
@@ -341,15 +346,25 @@ export default function IntelligencePanel({
             <h2>Seasonal progression</h2>
           </div>
           <div className="micro-segment">
-            <button data-active="true" type="button">
+            <button
+              data-active={outlookMetric === "index"}
+              onClick={() => setOutlookMetric("index")}
+              type="button"
+            >
               Index
             </button>
-            <button type="button">Count</button>
+            <button
+              data-active={outlookMetric === "count"}
+              onClick={() => setOutlookMetric("count")}
+              type="button"
+            >
+              Count
+            </button>
           </div>
         </div>
         <div className="forecast-grid">
           {forecast.map((item, index) => (
-            <div key={`${item.label}-${index}`}>
+            <div key={`${item.label}-${index}`} title={`${item.label}: ${formatNumber(item.count)} detections`}>
               <span>{item.label}</span>
               <svg viewBox="0 0 20 20">
                 <circle
@@ -365,6 +380,11 @@ export default function IntelligencePanel({
                   r={1.5 + item.value * 4.2}
                 />
               </svg>
+              {outlookMetric === "count" && (
+                <span className="forecast-count-label" style={{ fontSize: "10px", opacity: 0.85, marginTop: "2px" }}>
+                  {formatNumber(item.count)}
+                </span>
+              )}
             </div>
           ))}
         </div>
@@ -393,8 +413,22 @@ export default function IntelligencePanel({
         </div>
         <div className="season-track">
           <div>
-            <span style={{ left: "18%", width: "58%" }} />
-            <i style={{ left: "54%" }} />
+            {(() => {
+              const peakPct = Math.min(95, Math.max(5, Math.round((seasonPeak / 365) * 100)))
+              const startPct = Math.round((seasonStart / 365) * 100)
+              const endPct = Math.round((seasonEnd / 365) * 100)
+              const spanLeft = seasonEnd >= seasonStart ? startPct : Math.min(startPct, endPct)
+              const spanWidth =
+                seasonEnd >= seasonStart
+                  ? Math.max(8, endPct - startPct)
+                  : Math.max(8, Math.min(100, 100 - startPct + endPct))
+              return (
+                <>
+                  <span style={{ left: `${spanLeft}%`, width: `${spanWidth}%` }} />
+                  <i style={{ left: `${peakPct}%` }} title={`Peak: ${dayToDate(seasonPeak)}`} />
+                </>
+              )
+            })()}
           </div>
           <footer>
             <span>{dayToDate(seasonStart)} / START</span>

@@ -479,6 +479,13 @@ function computeBoundsFromGeometry(geometry: any): Bounds {
   }
 }
 
+export function areaKm2(bounds: Bounds): number {
+  const latDelta = Math.max(0.1, bounds.north - bounds.south)
+  const lonDelta = Math.max(0.1, bounds.east - bounds.west)
+  const meanLat = ((bounds.north + bounds.south) / 2) * (Math.PI / 180)
+  return latDelta * 111 * (lonDelta * 111 * Math.cos(meanLat))
+}
+
 export function getCountryFireRegime(bounds: Bounds, code: string, name: string) {
   const centerLat = (bounds.north + bounds.south) / 2
   const centerLon = (bounds.east + bounds.west) / 2
@@ -656,13 +663,6 @@ const historicalAnomaly = (
   }
 
   return (Math.sin(year * 13 + day * 0.05 + seed) > 0.65 ? 0.25 : -0.12) * normalized
-}
-
-const areaKm2 = (bounds: Bounds) => {
-  const latDelta = Math.max(0.1, bounds.north - bounds.south)
-  const lonDelta = Math.max(0.1, bounds.east - bounds.west)
-  const meanLat = ((bounds.north + bounds.south) / 2) * (Math.PI / 180)
-  return latDelta * 111 * (lonDelta * 111 * Math.cos(meanLat))
 }
 
 export const generateDashboardData = (

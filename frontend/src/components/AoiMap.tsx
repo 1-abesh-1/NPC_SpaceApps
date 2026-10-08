@@ -23,9 +23,18 @@ type ResizeHandle = "nw" | "n" | "ne" | "e" | "se" | "s" | "sw" | "w"
 const HANDLES: ResizeHandle[] = ["nw", "n", "ne", "e", "se", "s", "sw", "w"]
 const EPS = 0.0005
 
-// Backend base URL. Leave empty if Vite proxies /api to the backend,
-// otherwise set VITE_API_BASE=http://localhost:8000 in .env
-const API_BASE = (import.meta.env.VITE_API_BASE as string | undefined) ?? ""
+// Backend base URL. Uses relative /api in production on Render, or port 8000 in local dev
+const API_BASE = (
+  import.meta.env.VITE_API_BASE_URL ||
+  import.meta.env.VITE_API_BASE ||
+  (typeof window !== "undefined" && window.location.port === "5173"
+    ? "http://127.0.0.1:8000"
+    : "")
+).replace(/\/$/, "")
+
+const FIRMS_KEY = (
+  import.meta.env.VITE_FIRMS_KEY || "3190f953a2198c880c77c74397f9c6ce"
+).trim()
 
 // "World fires" mode draws at most this many dots (strongest by FRP first)
 const MAX_WORLD_POINTS = 10000
@@ -626,7 +635,7 @@ export default function AoiMap({
       return
     }
 
-    const key = import.meta.env.VITE_FIRMS_KEY
+    const key = FIRMS_KEY
     if (!key) {
       setHotspotStatus("Missing VITE_FIRMS_KEY in .env")
       return
@@ -760,7 +769,7 @@ export default function AoiMap({
       setWorldStatus("")
       return
     }
-    const key = import.meta.env.VITE_FIRMS_KEY
+    const key = FIRMS_KEY
     if (!key) {
       setWorldStatus("Missing VITE_FIRMS_KEY in .env")
       return
@@ -1297,6 +1306,8 @@ export default function AoiMap({
                 setActiveContinent(item.id)
                 setCustomBoxVisible(false)
                 setDrawing(false)
+                onCountry(null)
+                onBounds(item.bounds, item.name, 1.0)
                 mapRef.current?.flyToBounds(toLL(item.bounds), {
                   padding: [20, 20],
                   duration: 1.0,
