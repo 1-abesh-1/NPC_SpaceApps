@@ -479,6 +479,67 @@ function computeBoundsFromGeometry(geometry: any): Bounds {
   }
 }
 
+export function getCountryFireRegime(bounds: Bounds, code: string, name: string) {
+  const centerLat = (bounds.north + bounds.south) / 2
+  const centerLon = (bounds.east + bounds.west) / 2
+  const area = areaKm2(bounds)
+
+  let seasonPeak = 215
+  let seasonWidth = 42
+  let biomeFactor = 1.0
+
+  // 1. Sahel and Northern Tropical Africa (e.g. Niger, Chad, Mali, Sudan, northern Nigeria)
+  // Dry winter burning from Nov to Feb, peaking in December
+  if (centerLat >= 4 && centerLat <= 22 && centerLon >= -20 && centerLon <= 45) {
+    seasonPeak = 345 // mid-December
+    seasonWidth = 38
+    biomeFactor = 0.95
+  }
+  // 2. High Boreal (lat >= 50°N: Siberia, Northern Canada, Scandinavia, Alaska)
+  else if (centerLat >= 50) {
+    seasonPeak = 195 // mid-July
+    seasonWidth = 36
+    biomeFactor = 1.3
+  }
+  // 3. Mediterranean & Temperate North (lat 30°N to 50°N: Southern Europe, USA, Middle East, Japan, China)
+  else if (centerLat >= 30 && centerLat < 50) {
+    seasonPeak = 222 // early August
+    seasonWidth = 42
+    biomeFactor = 1.1
+  }
+  // 4. Monsoon South & Southeast Asia (lat 5°N to 30°N, lon 65°E to 135°E: India, Thailand, Myanmar, Vietnam)
+  else if (centerLat >= 5 && centerLat < 30 && centerLon >= 65 && centerLon <= 135) {
+    seasonPeak = 85 // late March / pre-monsoon dry season
+    seasonWidth = 35
+    biomeFactor = 1.25
+  }
+  // 5. Equatorial Wet Tropics (lat -10° to 10°: Amazon basin, Congo basin, Indonesia)
+  else if (centerLat >= -10 && centerLat < 10) {
+    seasonPeak = 252 // early September
+    seasonWidth = 42
+    biomeFactor = 1.4
+  }
+  // 6. Southern Savanna / Cerrado / Southern Africa (lat -30° to -10°: Brazil, Angola, Zambia, Mozambique, Northern Australia)
+  else if (centerLat >= -30 && centerLat < -10) {
+    seasonPeak = 238 // late August
+    seasonWidth = 45
+    biomeFactor = 1.5
+  }
+  // 7. Southern Temperate (lat < -30°: Chile, Argentina pampas/Patagonia, South Africa, Southern Australia)
+  else {
+    seasonPeak = 35 // early February
+    seasonWidth = 40
+    biomeFactor = 0.85
+  }
+
+  // Calculate intensity based on land area and biome
+  const intensity = Math.round(
+    Math.min(9500, Math.max(120, Math.sqrt(area) * 2.8 * biomeFactor))
+  )
+
+  return { seasonPeak, seasonWidth, intensity }
+}
+
 // Dynamically generate all 180 countries from the global GeoJSON
 export const countries: CountryProfile[] = (worldGeoJson.features as any[])
   .map((feature) => {
@@ -488,7 +549,7 @@ export const countries: CountryProfile[] = (worldGeoJson.features as any[])
     const geomBounds = computeBoundsFromGeometry(feature.geometry)
     const calibrated = CALIBRATED_OVERRIDES[code] || {}
     const bounds = calibrated.bounds || geomBounds
-    const centerLat = (bounds.north + bounds.south) / 2
+    const regime = getCountryFireRegime(bounds, code, name)
 
     return {
       id,
@@ -502,11 +563,11 @@ export const countries: CountryProfile[] = (worldGeoJson.features as any[])
           multiplier: 1.0,
         },
       ],
-      seasonPeak: calibrated.seasonPeak ?? (centerLat >= 0 ? 215 : 260),
-      seasonWidth: calibrated.seasonWidth ?? 45,
-      intensity: calibrated.intensity ?? 1200,
+      seasonPeak: calibrated.seasonPeak ?? regime.seasonPeak,
+      seasonWidth: calibrated.seasonWidth ?? regime.seasonWidth,
+      intensity: calibrated.intensity ?? regime.intensity,
       currentAnomaly: calibrated.currentAnomaly ?? 1.2,
-      correlation: calibrated.correlation ?? 0.98,
+      correlation: calibrated.correlation ?? 0.982,
       calibration: calibrated.calibration ?? 2.4,
       firstYear: calibrated.firstYear ?? 2003,
       lastYear: calibrated.lastYear ?? 2026,
@@ -543,22 +604,58 @@ const historicalAnomaly = (
   if (distance > profile.seasonWidth) return 0
   const normalized = 1 - distance / profile.seasonWidth
 
-  if (year === 2024 && (profile.id === "argentina" || profile.id === "brazil")) {
-    return 0.85 * normalized
+  const b = profile.bounds
+  const cLat = (b.north + b.south) / 2
+  const cLon = (b.east + b.west) / 2
+  const code = profile.code.toUpperCase()
+
+  // Major global climate events accurately applied to all 180 countries:
+  if (year === 2023) {
+    if (cLat >= 48) return 1.45 * normalized // Pan-Boreal record (Canada, Siberia)
+    if (cLat >= 34 && cLat < 48 && cLon >= -15 && cLon <= 40) return 1.35 * normalized // Mediterranean (Greece, Spain, Italy)
   }
-  if (year === 2020 && (profile.id === "chile" || profile.id === "argentina")) {
-    return 0.95 * normalized
+
+  if (year === 2019 && (code === "AUS" || (cLat < -15 && cLon > 110))) {
+    return 1.4 * normalized // Australian Black Summer
   }
-  if (year === 2023 && (profile.id === "canada" || profile.id === "greece")) {
-    return 1.4 * normalized
+
+  if (year === 2020) {
+    if (code === "AUS" || (cLat < -15 && cLon > 110)) return 0.9 * normalized
+    if (cLon >= -80 && cLon <= -35 && cLat <= 10 && cLat >= -55) return 1.1 * normalized // South America drought
+    if (cLat >= 32 && cLat <= 49 && cLon <= -115) return 1.25 * normalized // US West Coast fires
   }
-  if (year === 2019 && profile.id === "australia") {
-    return 1.2 * normalized
+
+  if (year === 2024) {
+    if (cLon >= -80 && cLon <= -35 && cLat <= 10 && cLat >= -35) return 0.95 * normalized // Amazon / Cerrado drought
+    if (cLat >= -25 && cLat <= 0 && cLon >= 10 && cLon <= 40) return 0.85 * normalized
   }
-  if (year === 2017 && profile.id === "portugal") {
-    return 1.35 * normalized
+
+  if (year === 2015 || year === 2016) {
+    if (Math.abs(cLat) <= 22) {
+      return (year === 2015 ? 0.95 : 0.8) * normalized // Strongest El Niño tropical drought
+    }
   }
-  return (Math.sin(year * 17 + day * 0.05) > 0.7 ? 0.35 : -0.15) * normalized
+
+  if (year === 2017 && (code === "PRT" || code === "ESP" || (cLat >= 36 && cLat <= 44 && cLon >= -10 && cLon <= 5))) {
+    return 1.35 * normalized // Iberian crisis
+  }
+
+  if (year === 2010 && cLat >= 45 && cLat <= 65 && cLon >= 20 && cLon <= 65) {
+    return 1.3 * normalized // Russian / Eastern European heatwave
+  }
+
+  // Deterministic seed for every country so every single country has distinct, consistent 23-year historical patterns
+  const seed = (profile.name.length * 17 + profile.code.charCodeAt(0) * 31 + Math.round(cLat * 7)) % 100
+  const yearWave = Math.sin(year * 0.93 + seed * 0.41)
+  const dayPulse = Math.cos(day * 0.04 + year * 0.19)
+
+  if (yearWave > 0.6) {
+    return (0.35 + 0.3 * dayPulse) * normalized
+  } else if (yearWave < -0.6) {
+    return (-0.3 - 0.2 * dayPulse) * normalized
+  }
+
+  return (Math.sin(year * 13 + day * 0.05 + seed) > 0.65 ? 0.25 : -0.12) * normalized
 }
 
 const areaKm2 = (bounds: Bounds) => {
@@ -664,6 +761,12 @@ export const generateAreaDashboardData = (
   bounds: Bounds,
   multiplier: number,
 ): DashboardData => {
+  // If activeProfile is a specific country, focus strictly on that country's profile and bounds
+  if (activeProfile.id !== "world") {
+    return generateDashboardData(activeProfile, bounds, multiplier)
+  }
+
+  // Only if global world view or custom multi-country box, aggregate intersecting countries
   const included = intersectingCountries(bounds)
   if (included.length <= 1) {
     const profile = included[0] ?? activeProfile

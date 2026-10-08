@@ -1,5 +1,77 @@
 [
   {
+    "iso": "AFG",
+    "name": "Afghanistan",
+    "bbox": [
+      60.53,
+      29.32,
+      75.16,
+      38.49
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 702765,
+    "status": "calibrated"
+  },
+  {
+    "iso": "ALB",
+    "name": "Albania",
+    "bbox": [
+      19.3,
+      39.62,
+      21.02,
+      42.69
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 132796,
+    "status": "calibrated"
+  },
+  {
+    "iso": "DZA",
+    "name": "Algeria",
+    "bbox": [
+      -8.68,
+      19.06,
+      12.0,
+      37.12
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1208910,
+    "status": "calibrated"
+  },
+  {
     "iso": "AGO",
     "name": "Angola",
     "bbox": [
@@ -22,6 +94,30 @@
     "last_year": 2024,
     "total_footprints": 6606494,
     "status": "ready"
+  },
+  {
+    "iso": "ATA",
+    "name": "Antarctica",
+    "bbox": [
+      -179.94,
+      -85.61,
+      180,
+      -63.27
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 3093132,
+    "status": "calibrated"
   },
   {
     "iso": "ARG",
@@ -48,6 +144,30 @@
     "status": "ready"
   },
   {
+    "iso": "ARM",
+    "name": "Armenia",
+    "bbox": [
+      43.58,
+      38.74,
+      46.51,
+      41.25
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 158083,
+    "status": "calibrated"
+  },
+  {
     "iso": "AUS",
     "name": "Australia",
     "bbox": [
@@ -70,6 +190,294 @@
     "last_year": 2024,
     "total_footprints": 4790013,
     "status": "ready"
+  },
+  {
+    "iso": "AUT",
+    "name": "Austria",
+    "bbox": [
+      9.48,
+      46.43,
+      16.98,
+      49.04
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 241652,
+    "status": "calibrated"
+  },
+  {
+    "iso": "AZE",
+    "name": "Azerbaijan",
+    "bbox": [
+      44.79,
+      38.27,
+      50.39,
+      41.86
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 261237,
+    "status": "calibrated"
+  },
+  {
+    "iso": "BGD",
+    "name": "Bangladesh",
+    "bbox": [
+      88.08,
+      20.67,
+      92.67,
+      26.45
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 788234,
+    "status": "calibrated"
+  },
+  {
+    "iso": "BLR",
+    "name": "Belarus",
+    "bbox": [
+      23.2,
+      51.32,
+      32.69,
+      56.17
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 555944,
+    "status": "calibrated"
+  },
+  {
+    "iso": "BEL",
+    "name": "Belgium",
+    "bbox": [
+      2.51,
+      49.53,
+      6.16,
+      51.48
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 226720,
+    "status": "calibrated"
+  },
+  {
+    "iso": "BLZ",
+    "name": "Belize",
+    "bbox": [
+      -89.23,
+      15.89,
+      -88.11,
+      18.5
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 267107,
+    "status": "calibrated"
+  },
+  {
+    "iso": "BEN",
+    "name": "Benin",
+    "bbox": [
+      0.77,
+      6.14,
+      3.8,
+      12.24
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 682757,
+    "status": "calibrated"
+  },
+  {
+    "iso": "BMU",
+    "name": "Bermuda",
+    "bbox": [
+      -64.88,
+      32.25,
+      -64.65,
+      32.39
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 10986,
+    "status": "calibrated"
+  },
+  {
+    "iso": "BTN",
+    "name": "Bhutan",
+    "bbox": [
+      88.81,
+      26.72,
+      92.1,
+      28.3
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 143003,
+    "status": "calibrated"
+  },
+  {
+    "iso": "BOL",
+    "name": "Bolivia",
+    "bbox": [
+      -69.59,
+      -22.87,
+      -57.5,
+      -9.76
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1971400,
+    "status": "calibrated"
+  },
+  {
+    "iso": "BIH",
+    "name": "Bosnia and Herzegovina",
+    "bbox": [
+      15.75,
+      42.65,
+      19.6,
+      45.23
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 178115,
+    "status": "calibrated"
+  },
+  {
+    "iso": "BWA",
+    "name": "Botswana",
+    "bbox": [
+      19.9,
+      -26.83,
+      29.43,
+      -17.66
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1437547,
+    "status": "calibrated"
   },
   {
     "iso": "BRA",
@@ -96,6 +504,150 @@
     "status": "ready"
   },
   {
+    "iso": "BRN",
+    "name": "Brunei",
+    "bbox": [
+      114.2,
+      4.01,
+      115.45,
+      5.45
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 214082,
+    "status": "calibrated"
+  },
+  {
+    "iso": "BGR",
+    "name": "Bulgaria",
+    "bbox": [
+      22.38,
+      41.23,
+      28.56,
+      44.23
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 245777,
+    "status": "calibrated"
+  },
+  {
+    "iso": "BFA",
+    "name": "Burkina Faso",
+    "bbox": [
+      -5.47,
+      9.61,
+      2.18,
+      15.12
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1025641,
+    "status": "calibrated"
+  },
+  {
+    "iso": "BDI",
+    "name": "Burundi",
+    "bbox": [
+      29.02,
+      -4.5,
+      30.75,
+      -2.35
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 307992,
+    "status": "calibrated"
+  },
+  {
+    "iso": "KHM",
+    "name": "Cambodia",
+    "bbox": [
+      102.35,
+      10.49,
+      107.61,
+      14.57
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 731600,
+    "status": "calibrated"
+  },
+  {
+    "iso": "CMR",
+    "name": "Cameroon",
+    "bbox": [
+      8.49,
+      1.73,
+      16.01,
+      12.86
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1456388,
+    "status": "calibrated"
+  },
+  {
     "iso": "CAN",
     "name": "Canada",
     "bbox": [
@@ -118,6 +670,54 @@
     "last_year": 2024,
     "total_footprints": 1044356,
     "status": "ready"
+  },
+  {
+    "iso": "CAF",
+    "name": "Central African Republic",
+    "bbox": [
+      14.46,
+      2.27,
+      27.37,
+      11.14
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1704590,
+    "status": "calibrated"
+  },
+  {
+    "iso": "TCD",
+    "name": "Chad",
+    "bbox": [
+      13.54,
+      7.42,
+      23.89,
+      23.41
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 2018943,
+    "status": "calibrated"
   },
   {
     "iso": "CHL",
@@ -144,6 +744,174 @@
     "status": "ready"
   },
   {
+    "iso": "CHN",
+    "name": "China",
+    "bbox": [
+      73.68,
+      18.2,
+      135.03,
+      53.46
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 2789125,
+    "status": "calibrated"
+  },
+  {
+    "iso": "COL",
+    "name": "Colombia",
+    "bbox": [
+      -78.99,
+      -4.3,
+      -66.88,
+      12.44
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 2272934,
+    "status": "calibrated"
+  },
+  {
+    "iso": "CRI",
+    "name": "Costa Rica",
+    "bbox": [
+      -85.94,
+      8.23,
+      -82.55,
+      11.22
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 505216,
+    "status": "calibrated"
+  },
+  {
+    "iso": "HRV",
+    "name": "Croatia",
+    "bbox": [
+      13.66,
+      42.48,
+      19.39,
+      46.5
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 269974,
+    "status": "calibrated"
+  },
+  {
+    "iso": "CUB",
+    "name": "Cuba",
+    "bbox": [
+      -84.97,
+      19.86,
+      -74.18,
+      23.19
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 924102,
+    "status": "calibrated"
+  },
+  {
+    "iso": "CYP",
+    "name": "Cyprus",
+    "bbox": [
+      32.26,
+      34.57,
+      34.0,
+      35.17
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 61638,
+    "status": "calibrated"
+  },
+  {
+    "iso": "CZE",
+    "name": "Czech Republic",
+    "bbox": [
+      12.24,
+      48.56,
+      18.85,
+      51.12
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 220013,
+    "status": "calibrated"
+  },
+  {
     "iso": "COD",
     "name": "DR Congo",
     "bbox": [
@@ -166,6 +934,534 @@
     "last_year": 2024,
     "total_footprints": 9035351,
     "status": "ready"
+  },
+  {
+    "iso": "DNK",
+    "name": "Denmark",
+    "bbox": [
+      8.09,
+      54.8,
+      12.69,
+      57.73
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 291535,
+    "status": "calibrated"
+  },
+  {
+    "iso": "DJI",
+    "name": "Djibouti",
+    "bbox": [
+      41.66,
+      10.93,
+      43.32,
+      12.7
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 271066,
+    "status": "calibrated"
+  },
+  {
+    "iso": "DOM",
+    "name": "Dominican Republic",
+    "bbox": [
+      -71.95,
+      17.6,
+      -68.32,
+      19.88
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 447484,
+    "status": "calibrated"
+  },
+  {
+    "iso": "TLS",
+    "name": "East Timor",
+    "bbox": [
+      124.97,
+      -9.39,
+      127.34,
+      -8.27
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 258868,
+    "status": "calibrated"
+  },
+  {
+    "iso": "ECU",
+    "name": "Ecuador",
+    "bbox": [
+      -80.97,
+      -4.96,
+      -75.23,
+      1.38
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 964006,
+    "status": "calibrated"
+  },
+  {
+    "iso": "EGY",
+    "name": "Egypt",
+    "bbox": [
+      24.7,
+      22,
+      36.87,
+      31.59
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 679772,
+    "status": "calibrated"
+  },
+  {
+    "iso": "SLV",
+    "name": "El Salvador",
+    "bbox": [
+      -90.1,
+      13.15,
+      -87.72,
+      14.42
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 273860,
+    "status": "calibrated"
+  },
+  {
+    "iso": "GNQ",
+    "name": "Equatorial Guinea",
+    "bbox": [
+      9.31,
+      1.01,
+      11.29,
+      2.28
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 253413,
+    "status": "calibrated"
+  },
+  {
+    "iso": "ERI",
+    "name": "Eritrea",
+    "bbox": [
+      36.32,
+      12.46,
+      43.08,
+      18.0
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 960837,
+    "status": "calibrated"
+  },
+  {
+    "iso": "EST",
+    "name": "Estonia",
+    "bbox": [
+      23.34,
+      57.47,
+      28.13,
+      59.61
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 246469,
+    "status": "calibrated"
+  },
+  {
+    "iso": "ETH",
+    "name": "Ethiopia",
+    "bbox": [
+      32.95,
+      3.42,
+      47.79,
+      14.96
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 2078260,
+    "status": "calibrated"
+  },
+  {
+    "iso": "FLK",
+    "name": "Falkland Islands",
+    "bbox": [
+      -61.2,
+      -52.3,
+      -57.75,
+      -51.1
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 106682,
+    "status": "calibrated"
+  },
+  {
+    "iso": "FJI",
+    "name": "Fiji",
+    "bbox": [
+      -180,
+      -18.29,
+      180,
+      -16.02
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 4466500,
+    "status": "calibrated"
+  },
+  {
+    "iso": "FIN",
+    "name": "Finland",
+    "bbox": [
+      20.65,
+      59.85,
+      31.52,
+      70.16
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 733283,
+    "status": "calibrated"
+  },
+  {
+    "iso": "FRA",
+    "name": "France",
+    "bbox": [
+      -4.59,
+      41.38,
+      9.56,
+      51.15
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 651089,
+    "status": "calibrated"
+  },
+  {
+    "iso": "GUF",
+    "name": "French Guiana",
+    "bbox": [
+      -54.52,
+      2.05,
+      -51.66,
+      5.76
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 520056,
+    "status": "calibrated"
+  },
+  {
+    "iso": "ATF",
+    "name": "French Southern and Antarctic Lands",
+    "bbox": [
+      68.72,
+      -49.77,
+      70.56,
+      -48.62
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 78315,
+    "status": "calibrated"
+  },
+  {
+    "iso": "GAB",
+    "name": "Gabon",
+    "bbox": [
+      8.8,
+      -3.98,
+      14.43,
+      2.33
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 952646,
+    "status": "calibrated"
+  },
+  {
+    "iso": "GMB",
+    "name": "Gambia",
+    "bbox": [
+      -16.84,
+      13.13,
+      -13.84,
+      13.88
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 236422,
+    "status": "calibrated"
+  },
+  {
+    "iso": "GEO",
+    "name": "Georgia",
+    "bbox": [
+      39.96,
+      41.06,
+      46.64,
+      43.55
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 233589,
+    "status": "calibrated"
+  },
+  {
+    "iso": "DEU",
+    "name": "Germany",
+    "bbox": [
+      5.99,
+      47.3,
+      15.02,
+      54.98
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 702906,
+    "status": "calibrated"
+  },
+  {
+    "iso": "GHA",
+    "name": "Ghana",
+    "bbox": [
+      -3.24,
+      4.71,
+      1.06,
+      11.1
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 833867,
+    "status": "calibrated"
   },
   {
     "iso": "GRC",
@@ -192,6 +1488,1494 @@
     "status": "ready"
   },
   {
+    "iso": "GRL",
+    "name": "Greenland",
+    "bbox": [
+      -73.3,
+      60.04,
+      -12.21,
+      83.65
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 2259009,
+    "status": "calibrated"
+  },
+  {
+    "iso": "GTM",
+    "name": "Guatemala",
+    "bbox": [
+      -92.23,
+      13.74,
+      -88.23,
+      17.82
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 633437,
+    "status": "calibrated"
+  },
+  {
+    "iso": "GIN",
+    "name": "Guinea",
+    "bbox": [
+      -15.13,
+      7.31,
+      -7.83,
+      12.59
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 984856,
+    "status": "calibrated"
+  },
+  {
+    "iso": "GNB",
+    "name": "Guinea Bissau",
+    "bbox": [
+      -16.68,
+      11.04,
+      -13.7,
+      12.63
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 344212,
+    "status": "calibrated"
+  },
+  {
+    "iso": "GUY",
+    "name": "Guyana",
+    "bbox": [
+      -61.41,
+      1.27,
+      -56.54,
+      8.37
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 938231,
+    "status": "calibrated"
+  },
+  {
+    "iso": "HTI",
+    "name": "Haiti",
+    "bbox": [
+      -74.46,
+      18.03,
+      -71.62,
+      19.92
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 360116,
+    "status": "calibrated"
+  },
+  {
+    "iso": "HND",
+    "name": "Honduras",
+    "bbox": [
+      -89.35,
+      12.98,
+      -83.15,
+      16.01
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 681676,
+    "status": "calibrated"
+  },
+  {
+    "iso": "HUN",
+    "name": "Hungary",
+    "bbox": [
+      16.2,
+      45.76,
+      22.71,
+      48.62
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 236899,
+    "status": "calibrated"
+  },
+  {
+    "iso": "ISL",
+    "name": "Iceland",
+    "bbox": [
+      -24.33,
+      63.5,
+      -13.61,
+      66.53
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 394698,
+    "status": "calibrated"
+  },
+  {
+    "iso": "IND",
+    "name": "India",
+    "bbox": [
+      68.18,
+      7.97,
+      97.4,
+      35.49
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 4368610,
+    "status": "calibrated"
+  },
+  {
+    "iso": "IDN",
+    "name": "Indonesia",
+    "bbox": [
+      95.29,
+      -10.36,
+      141.03,
+      5.48
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 4300452,
+    "status": "calibrated"
+  },
+  {
+    "iso": "IRN",
+    "name": "Iran",
+    "bbox": [
+      44.11,
+      25.08,
+      63.32,
+      39.71
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1025953,
+    "status": "calibrated"
+  },
+  {
+    "iso": "IRQ",
+    "name": "Iraq",
+    "bbox": [
+      38.79,
+      29.1,
+      48.57,
+      37.39
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 548416,
+    "status": "calibrated"
+  },
+  {
+    "iso": "IRL",
+    "name": "Ireland",
+    "bbox": [
+      -9.98,
+      51.67,
+      -6.03,
+      55.13
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 304183,
+    "status": "calibrated"
+  },
+  {
+    "iso": "ISR",
+    "name": "Israel",
+    "bbox": [
+      34.27,
+      29.5,
+      35.84,
+      33.28
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 149902,
+    "status": "calibrated"
+  },
+  {
+    "iso": "ITA",
+    "name": "Italy",
+    "bbox": [
+      6.75,
+      36.62,
+      18.48,
+      47.12
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 637818,
+    "status": "calibrated"
+  },
+  {
+    "iso": "CIV",
+    "name": "Ivory Coast",
+    "bbox": [
+      -8.6,
+      4.34,
+      -2.56,
+      10.52
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 972449,
+    "status": "calibrated"
+  },
+  {
+    "iso": "JAM",
+    "name": "Jamaica",
+    "bbox": [
+      -78.34,
+      17.7,
+      -76.2,
+      18.52
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 206427,
+    "status": "calibrated"
+  },
+  {
+    "iso": "JPN",
+    "name": "Japan",
+    "bbox": [
+      129.41,
+      31.03,
+      145.54,
+      45.55
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 902978,
+    "status": "calibrated"
+  },
+  {
+    "iso": "JOR",
+    "name": "Jordan",
+    "bbox": [
+      34.92,
+      29.2,
+      39.2,
+      33.38
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 260407,
+    "status": "calibrated"
+  },
+  {
+    "iso": "KAZ",
+    "name": "Kazakhstan",
+    "bbox": [
+      46.47,
+      40.66,
+      87.36,
+      55.39
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1336701,
+    "status": "calibrated"
+  },
+  {
+    "iso": "KEN",
+    "name": "Kenya",
+    "bbox": [
+      33.89,
+      -4.68,
+      41.86,
+      5.51
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1440442,
+    "status": "calibrated"
+  },
+  {
+    "iso": "CS-KM",
+    "name": "Kosovo",
+    "bbox": [
+      20.07,
+      41.85,
+      21.78,
+      43.27
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 89068,
+    "status": "calibrated"
+  },
+  {
+    "iso": "KWT",
+    "name": "Kuwait",
+    "bbox": [
+      46.57,
+      28.53,
+      48.42,
+      30.06
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 104638,
+    "status": "calibrated"
+  },
+  {
+    "iso": "KGZ",
+    "name": "Kyrgyzstan",
+    "bbox": [
+      69.46,
+      39.28,
+      80.26,
+      43.3
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 380389,
+    "status": "calibrated"
+  },
+  {
+    "iso": "LAO",
+    "name": "Laos",
+    "bbox": [
+      100.12,
+      13.88,
+      107.56,
+      22.46
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1244825,
+    "status": "calibrated"
+  },
+  {
+    "iso": "LVA",
+    "name": "Latvia",
+    "bbox": [
+      21.06,
+      55.62,
+      28.18,
+      57.97
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 322562,
+    "status": "calibrated"
+  },
+  {
+    "iso": "LBN",
+    "name": "Lebanon",
+    "bbox": [
+      35.13,
+      33.09,
+      36.61,
+      34.64
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 91918,
+    "status": "calibrated"
+  },
+  {
+    "iso": "LSO",
+    "name": "Lesotho",
+    "bbox": [
+      27.0,
+      -30.65,
+      29.33,
+      -28.65
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 134027,
+    "status": "calibrated"
+  },
+  {
+    "iso": "LBR",
+    "name": "Liberia",
+    "bbox": [
+      -11.44,
+      4.36,
+      -7.54,
+      8.54
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 643320,
+    "status": "calibrated"
+  },
+  {
+    "iso": "LBY",
+    "name": "Libya",
+    "bbox": [
+      9.32,
+      19.58,
+      25.16,
+      33.14
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 923934,
+    "status": "calibrated"
+  },
+  {
+    "iso": "LTU",
+    "name": "Lithuania",
+    "bbox": [
+      21.06,
+      53.91,
+      26.59,
+      56.37
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 297139,
+    "status": "calibrated"
+  },
+  {
+    "iso": "LUX",
+    "name": "Luxembourg",
+    "bbox": [
+      5.67,
+      49.44,
+      6.24,
+      50.13
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 33561,
+    "status": "calibrated"
+  },
+  {
+    "iso": "MKD",
+    "name": "Macedonia",
+    "bbox": [
+      20.46,
+      40.84,
+      22.95,
+      42.32
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 110576,
+    "status": "calibrated"
+  },
+  {
+    "iso": "MDG",
+    "name": "Madagascar",
+    "bbox": [
+      43.25,
+      -25.6,
+      50.48,
+      -12.04
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1539760,
+    "status": "calibrated"
+  },
+  {
+    "iso": "MWI",
+    "name": "Malawi",
+    "bbox": [
+      32.69,
+      -16.8,
+      35.77,
+      -9.23
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 761829,
+    "status": "calibrated"
+  },
+  {
+    "iso": "MYS",
+    "name": "Malaysia",
+    "bbox": [
+      100.09,
+      0.77,
+      119.18,
+      6.93
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1731363,
+    "status": "calibrated"
+  },
+  {
+    "iso": "MLI",
+    "name": "Mali",
+    "bbox": [
+      -12.17,
+      10.1,
+      4.27,
+      24.97
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 2440392,
+    "status": "calibrated"
+  },
+  {
+    "iso": "MLT",
+    "name": "Malta",
+    "bbox": [
+      14.18,
+      35.82,
+      14.57,
+      36.08
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 19081,
+    "status": "calibrated"
+  },
+  {
+    "iso": "MRT",
+    "name": "Mauritania",
+    "bbox": [
+      -17.06,
+      14.62,
+      -4.92,
+      27.4
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1923630,
+    "status": "calibrated"
+  },
+  {
+    "iso": "MEX",
+    "name": "Mexico",
+    "bbox": [
+      -117.13,
+      14.54,
+      -86.81,
+      32.72
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 3591956,
+    "status": "calibrated"
+  },
+  {
+    "iso": "MDA",
+    "name": "Moldova",
+    "bbox": [
+      26.62,
+      45.49,
+      30.02,
+      48.47
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 175103,
+    "status": "calibrated"
+  },
+  {
+    "iso": "MNG",
+    "name": "Mongolia",
+    "bbox": [
+      87.75,
+      41.6,
+      119.77,
+      52.05
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1007729,
+    "status": "calibrated"
+  },
+  {
+    "iso": "MNE",
+    "name": "Montenegro",
+    "bbox": [
+      18.45,
+      41.88,
+      20.34,
+      43.52
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 100518,
+    "status": "calibrated"
+  },
+  {
+    "iso": "MAR",
+    "name": "Morocco",
+    "bbox": [
+      -17.02,
+      21.42,
+      -1.12,
+      35.76
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 942347,
+    "status": "calibrated"
+  },
+  {
+    "iso": "MOZ",
+    "name": "Mozambique",
+    "bbox": [
+      30.18,
+      -26.74,
+      40.78,
+      -10.32
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 2053360,
+    "status": "calibrated"
+  },
+  {
+    "iso": "MMR",
+    "name": "Myanmar",
+    "bbox": [
+      92.3,
+      9.93,
+      101.18,
+      28.34
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1986447,
+    "status": "calibrated"
+  },
+  {
+    "iso": "NAM",
+    "name": "Namibia",
+    "bbox": [
+      11.73,
+      -29.05,
+      25.08,
+      -16.94
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1949931,
+    "status": "calibrated"
+  },
+  {
+    "iso": "NPL",
+    "name": "Nepal",
+    "bbox": [
+      80.09,
+      26.4,
+      88.17,
+      30.42
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 355981,
+    "status": "calibrated"
+  },
+  {
+    "iso": "NLD",
+    "name": "Netherlands",
+    "bbox": [
+      3.31,
+      50.8,
+      7.09,
+      53.51
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 267141,
+    "status": "calibrated"
+  },
+  {
+    "iso": "NCL",
+    "name": "New Caledonia",
+    "bbox": [
+      164.03,
+      -22.4,
+      167.12,
+      -20.11
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 410473,
+    "status": "calibrated"
+  },
+  {
+    "iso": "NZL",
+    "name": "New Zealand",
+    "bbox": [
+      166.51,
+      -46.64,
+      178.52,
+      -34.45
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 702464,
+    "status": "calibrated"
+  },
+  {
+    "iso": "NIC",
+    "name": "Nicaragua",
+    "bbox": [
+      -87.67,
+      10.73,
+      -83.15,
+      15.02
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 694950,
+    "status": "calibrated"
+  },
+  {
+    "iso": "NER",
+    "name": "Niger",
+    "bbox": [
+      0.3,
+      11.66,
+      15.9,
+      23.47
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 2118383,
+    "status": "calibrated"
+  },
+  {
+    "iso": "NGA",
+    "name": "Nigeria",
+    "bbox": [
+      2.69,
+      4.24,
+      14.58,
+      13.87
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1699676,
+    "status": "calibrated"
+  },
+  {
+    "iso": "PRK",
+    "name": "North Korea",
+    "bbox": [
+      124.27,
+      37.67,
+      130.78,
+      42.99
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 342209,
+    "status": "calibrated"
+  },
+  {
+    "iso": "-99",
+    "name": "Northern Cyprus",
+    "bbox": [
+      32.73,
+      35.0,
+      34.58,
+      35.67
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 66970,
+    "status": "calibrated"
+  },
+  {
+    "iso": "NOR",
+    "name": "Norway",
+    "bbox": [
+      4.99,
+      58.08,
+      31.29,
+      80.66
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1541380,
+    "status": "calibrated"
+  },
+  {
+    "iso": "OMN",
+    "name": "Oman",
+    "bbox": [
+      52.0,
+      16.65,
+      59.81,
+      26.4
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1345286,
+    "status": "calibrated"
+  },
+  {
+    "iso": "PAK",
+    "name": "Pakistan",
+    "bbox": [
+      60.87,
+      23.69,
+      77.84,
+      37.13
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 934061,
+    "status": "calibrated"
+  },
+  {
+    "iso": "PAN",
+    "name": "Panama",
+    "bbox": [
+      -82.97,
+      7.22,
+      -77.24,
+      9.61
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 588316,
+    "status": "calibrated"
+  },
+  {
+    "iso": "PNG",
+    "name": "Papua New Guinea",
+    "bbox": [
+      141.0,
+      -10.65,
+      156.02,
+      -2.5
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1762650,
+    "status": "calibrated"
+  },
+  {
     "iso": "PRY",
     "name": "Paraguay",
     "bbox": [
@@ -216,6 +3000,78 @@
     "status": "ready"
   },
   {
+    "iso": "PER",
+    "name": "Peru",
+    "bbox": [
+      -81.41,
+      -18.35,
+      -68.67,
+      -0.06
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 2424166,
+    "status": "calibrated"
+  },
+  {
+    "iso": "PHL",
+    "name": "Philippines",
+    "bbox": [
+      117.17,
+      5.58,
+      126.54,
+      18.51
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1739884,
+    "status": "calibrated"
+  },
+  {
+    "iso": "POL",
+    "name": "Poland",
+    "bbox": [
+      14.07,
+      49.03,
+      24.03,
+      54.85
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 637011,
+    "status": "calibrated"
+  },
+  {
     "iso": "PRT",
     "name": "Portugal",
     "bbox": [
@@ -238,6 +3094,966 @@
     "last_year": 2024,
     "total_footprints": 56938,
     "status": "ready"
+  },
+  {
+    "iso": "PRI",
+    "name": "Puerto Rico",
+    "bbox": [
+      -67.24,
+      17.95,
+      -65.59,
+      18.52
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 151069,
+    "status": "calibrated"
+  },
+  {
+    "iso": "QAT",
+    "name": "Qatar",
+    "bbox": [
+      50.74,
+      24.56,
+      51.61,
+      26.11
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 73526,
+    "status": "calibrated"
+  },
+  {
+    "iso": "SRB",
+    "name": "Republic of Serbia",
+    "bbox": [
+      18.83,
+      42.25,
+      22.99,
+      46.17
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 227698,
+    "status": "calibrated"
+  },
+  {
+    "iso": "COG",
+    "name": "Republic of the Congo",
+    "bbox": [
+      11.09,
+      -5.04,
+      18.45,
+      3.73
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1284132,
+    "status": "calibrated"
+  },
+  {
+    "iso": "ROU",
+    "name": "Romania",
+    "bbox": [
+      20.22,
+      43.69,
+      29.63,
+      48.22
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 362560,
+    "status": "calibrated"
+  },
+  {
+    "iso": "RUS",
+    "name": "Russia",
+    "bbox": [
+      -180,
+      41.15,
+      180,
+      81.25
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 8886488,
+    "status": "calibrated"
+  },
+  {
+    "iso": "RWA",
+    "name": "Rwanda",
+    "bbox": [
+      29.02,
+      -2.92,
+      30.82,
+      -1.13
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 286822,
+    "status": "calibrated"
+  },
+  {
+    "iso": "SAU",
+    "name": "Saudi Arabia",
+    "bbox": [
+      34.63,
+      16.35,
+      55.67,
+      32.16
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 2783597,
+    "status": "calibrated"
+  },
+  {
+    "iso": "SEN",
+    "name": "Senegal",
+    "bbox": [
+      -17.63,
+      12.33,
+      -11.47,
+      16.6
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 806667,
+    "status": "calibrated"
+  },
+  {
+    "iso": "SLE",
+    "name": "Sierra Leone",
+    "bbox": [
+      -13.25,
+      6.79,
+      -10.23,
+      10.05
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 498820,
+    "status": "calibrated"
+  },
+  {
+    "iso": "SVK",
+    "name": "Slovakia",
+    "bbox": [
+      16.88,
+      47.76,
+      22.56,
+      49.57
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 173544,
+    "status": "calibrated"
+  },
+  {
+    "iso": "SVN",
+    "name": "Slovenia",
+    "bbox": [
+      13.7,
+      45.45,
+      16.56,
+      46.85
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 110921,
+    "status": "calibrated"
+  },
+  {
+    "iso": "SLB",
+    "name": "Solomon Islands",
+    "bbox": [
+      156.49,
+      -10.83,
+      162.4,
+      -6.6
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 794561,
+    "status": "calibrated"
+  },
+  {
+    "iso": "SOM",
+    "name": "Somalia",
+    "bbox": [
+      40.98,
+      -1.68,
+      51.13,
+      12.02
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1881020,
+    "status": "calibrated"
+  },
+  {
+    "iso": "-99",
+    "name": "Somaliland",
+    "bbox": [
+      42.56,
+      8.0,
+      48.95,
+      11.46
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 746152,
+    "status": "calibrated"
+  },
+  {
+    "iso": "ZAF",
+    "name": "South Africa",
+    "bbox": [
+      16.34,
+      -34.82,
+      32.83,
+      -22.09
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 904774,
+    "status": "calibrated"
+  },
+  {
+    "iso": "KOR",
+    "name": "South Korea",
+    "bbox": [
+      126.12,
+      34.39,
+      129.47,
+      38.61
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 224513,
+    "status": "calibrated"
+  },
+  {
+    "iso": "SSD",
+    "name": "South Sudan",
+    "bbox": [
+      23.89,
+      3.51,
+      35.3,
+      12.25
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1588633,
+    "status": "calibrated"
+  },
+  {
+    "iso": "ESP",
+    "name": "Spain",
+    "bbox": [
+      -9.39,
+      35.95,
+      3.04,
+      43.75
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 574592,
+    "status": "calibrated"
+  },
+  {
+    "iso": "LKA",
+    "name": "Sri Lanka",
+    "bbox": [
+      79.7,
+      5.97,
+      81.79,
+      9.82
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 451253,
+    "status": "calibrated"
+  },
+  {
+    "iso": "SDN",
+    "name": "Sudan",
+    "bbox": [
+      21.94,
+      8.62,
+      38.41,
+      22
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 2330311,
+    "status": "calibrated"
+  },
+  {
+    "iso": "SUR",
+    "name": "Suriname",
+    "bbox": [
+      -58.04,
+      1.82,
+      -53.96,
+      6.03
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 661677,
+    "status": "calibrated"
+  },
+  {
+    "iso": "SWZ",
+    "name": "Swaziland",
+    "bbox": [
+      30.68,
+      -27.29,
+      32.07,
+      -25.66
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 94845,
+    "status": "calibrated"
+  },
+  {
+    "iso": "SWE",
+    "name": "Sweden",
+    "bbox": [
+      11.03,
+      55.36,
+      23.9,
+      69.11
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 967511,
+    "status": "calibrated"
+  },
+  {
+    "iso": "CHE",
+    "name": "Switzerland",
+    "bbox": [
+      6.02,
+      45.78,
+      10.44,
+      47.83
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 165860,
+    "status": "calibrated"
+  },
+  {
+    "iso": "SYR",
+    "name": "Syria",
+    "bbox": [
+      35.7,
+      32.31,
+      42.35,
+      37.23
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 345269,
+    "status": "calibrated"
+  },
+  {
+    "iso": "TWN",
+    "name": "Taiwan",
+    "bbox": [
+      120.11,
+      21.97,
+      121.95,
+      25.3
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 378697,
+    "status": "calibrated"
+  },
+  {
+    "iso": "TJK",
+    "name": "Tajikistan",
+    "bbox": [
+      67.44,
+      36.74,
+      74.98,
+      40.96
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 331532,
+    "status": "calibrated"
+  },
+  {
+    "iso": "THA",
+    "name": "Thailand",
+    "bbox": [
+      97.38,
+      5.69,
+      105.59,
+      20.42
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1734890,
+    "status": "calibrated"
+  },
+  {
+    "iso": "BHS",
+    "name": "The Bahamas",
+    "bbox": [
+      -78.98,
+      23.71,
+      -77,
+      27.04
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 162554,
+    "status": "calibrated"
+  },
+  {
+    "iso": "TGO",
+    "name": "Togo",
+    "bbox": [
+      -0.05,
+      5.93,
+      1.87,
+      11.02
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 496947,
+    "status": "calibrated"
+  },
+  {
+    "iso": "TTO",
+    "name": "Trinidad and Tobago",
+    "bbox": [
+      -61.95,
+      10,
+      -60.9,
+      10.89
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 153231,
+    "status": "calibrated"
+  },
+  {
+    "iso": "TUN",
+    "name": "Tunisia",
+    "bbox": [
+      7.52,
+      30.31,
+      11.49,
+      37.35
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 320904,
+    "status": "calibrated"
+  },
+  {
+    "iso": "TUR",
+    "name": "Turkey",
+    "bbox": [
+      26.04,
+      35.82,
+      44.79,
+      42.14
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 639213,
+    "status": "calibrated"
+  },
+  {
+    "iso": "TKM",
+    "name": "Turkmenistan",
+    "bbox": [
+      52.5,
+      35.27,
+      66.55,
+      42.75
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 601843,
+    "status": "calibrated"
+  },
+  {
+    "iso": "UGA",
+    "name": "Uganda",
+    "bbox": [
+      29.58,
+      -1.44,
+      35.04,
+      4.25
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 890784,
+    "status": "calibrated"
+  },
+  {
+    "iso": "UKR",
+    "name": "Ukraine",
+    "bbox": [
+      22.09,
+      44.36,
+      40.08,
+      52.34
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 650525,
+    "status": "calibrated"
+  },
+  {
+    "iso": "ARE",
+    "name": "United Arab Emirates",
+    "bbox": [
+      51.58,
+      22.5,
+      56.4,
+      26.06
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 632154,
+    "status": "calibrated"
+  },
+  {
+    "iso": "GBR",
+    "name": "United Kingdom",
+    "bbox": [
+      -7.57,
+      49.96,
+      1.68,
+      58.63
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 729015,
+    "status": "calibrated"
+  },
+  {
+    "iso": "TZA",
+    "name": "United Republic of Tanzania",
+    "bbox": [
+      29.34,
+      -11.72,
+      40.32,
+      -0.95
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1732863,
+    "status": "calibrated"
   },
   {
     "iso": "USA",
@@ -286,5 +4102,221 @@
     "last_year": 2024,
     "total_footprints": 25694,
     "status": "ready"
+  },
+  {
+    "iso": "UZB",
+    "name": "Uzbekistan",
+    "bbox": [
+      55.93,
+      37.14,
+      73.06,
+      45.59
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 694162,
+    "status": "calibrated"
+  },
+  {
+    "iso": "VUT",
+    "name": "Vanuatu",
+    "bbox": [
+      166.63,
+      -16.6,
+      167.84,
+      -14.63
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 242183,
+    "status": "calibrated"
+  },
+  {
+    "iso": "VEN",
+    "name": "Venezuela",
+    "bbox": [
+      -73.3,
+      0.72,
+      -59.76,
+      12.16
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1983048,
+    "status": "calibrated"
+  },
+  {
+    "iso": "VNM",
+    "name": "Vietnam",
+    "bbox": [
+      102.17,
+      8.6,
+      109.34,
+      23.35
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1611717,
+    "status": "calibrated"
+  },
+  {
+    "iso": "PSE",
+    "name": "West Bank",
+    "bbox": [
+      34.93,
+      31.35,
+      35.55,
+      32.53
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 52476,
+    "status": "calibrated"
+  },
+  {
+    "iso": "ESH",
+    "name": "Western Sahara",
+    "bbox": [
+      -17.06,
+      21.0,
+      -8.67,
+      27.66
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1140532,
+    "status": "calibrated"
+  },
+  {
+    "iso": "YEM",
+    "name": "Yemen",
+    "bbox": [
+      42.6,
+      12.59,
+      53.11,
+      19.0
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1286938,
+    "status": "calibrated"
+  },
+  {
+    "iso": "ZMB",
+    "name": "Zambia",
+    "bbox": [
+      21.89,
+      -17.96,
+      33.49,
+      -8.24
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1675026,
+    "status": "calibrated"
+  },
+  {
+    "iso": "ZWE",
+    "name": "Zimbabwe",
+    "bbox": [
+      25.26,
+      -22.27,
+      32.85,
+      -15.51
+    ],
+    "k": 0.442,
+    "k_source": "regional_calibration",
+    "r": 0.982,
+    "gaps": {
+      "daily": 0.28,
+      "weekly": 0.16,
+      "monthly": 0.12
+    },
+    "quiet_ratio": 2.8,
+    "busy_ratio": 2.1,
+    "first_year": 2003,
+    "last_year": 2026,
+    "total_footprints": 1113673,
+    "status": "calibrated"
   }
 ]

@@ -145,7 +145,7 @@ const handlePos = (b: Bounds, h: ResizeHandle): L.LatLngTuple => [
   h.includes("w") ? b.west : h.includes("e") ? b.east : (b.west + b.east) / 2,
 ]
 const anomalyColor = (a: number) =>
-  a >= 2 ? "#ff3d00" : a >= 1 ? "#ffb300" : "#9aa0a6"
+  a >= 2 ? "#ff3d00" : a >= 1 ? "#ffb300" : "#ff7832"
 
 // Country shapes (ISO3 in feature.id). For reliability, download this file into
 // /public and point the URL at "/countries.geo.json".
@@ -663,28 +663,63 @@ export default function AoiMap({
 
         const renderer = hotspotRendererRef.current ?? undefined
         const group = L.layerGroup()
-        const used = rows.slice(0, 5000)
-        used.forEach((r) => {
-          const c = r.split(",")
+
+        // When a country is selected and NOT in world fires mode, clip fires strictly to country polygon
+        let countryRings: number[][][] | null = null
+        if (country) {
+          const shapes = geoRef.current?.features ?? (worldGeoJson.features as any[])
+          const feat = shapes.find((f: any) => matchesCountry(f, country))
+          if (feat?.geometry) {
+            const g = feat.geometry
+            countryRings = []
+            if (g.type === "Polygon") {
+              if (g.coordinates?.[0]) countryRings.push(g.coordinates[0])
+            } else if (g.type === "MultiPolygon") {
+              g.coordinates?.forEach((poly: any) => {
+                if (poly?.[0]) countryRings!.push(poly[0])
+              })
+            }
+          }
+        }
+
+        const parsedPts: { lat: number; lng: number; frp: number }[] = []
+        for (let i = 0; i < rows.length; i++) {
+          const c = rows[i].split(",")
+          const lat = Number(c[iLat])
+          const lng = Number(c[iLng])
           const frp = Number(c[iFrp]) || 0
-          L.circleMarker([Number(c[iLat]), Number(c[iLng])], {
+          if (Number.isNaN(lat) || Number.isNaN(lng)) continue
+
+          // Spatial clipping: if country selected, point must fall strictly inside its polygon
+          if (countryRings && countryRings.length > 0) {
+            const inside = countryRings.some((ring) => ringHas(ring, lng, lat))
+            if (!inside) continue
+          }
+
+          parsedPts.push({ lat, lng, frp })
+          if (parsedPts.length >= 5000) break
+        }
+
+        parsedPts.forEach((pt) => {
+          L.circleMarker([pt.lat, pt.lng], {
             renderer,
             interactive: false,
-            radius: Math.min(3 + frp / 20, 9),
+            radius: Math.min(3 + pt.frp / 20, 9),
             color: "#ffffff",
             weight: 0.5,
             fillColor: "#ff3d00",
             fillOpacity: 0.85,
           }).addTo(group)
         })
+
         group.addTo(map)
         hotspotRef.current = group
         setHotspotStatus(
-          used.length >= 5000
-            ? "5000+ raw satellite hotspots (zoom in to see all)"
-            : used.length
-              ? `${used.length} raw satellite hotspots (NASA FIRMS)`
-              : "No fire detected in this view on this day",
+          parsedPts.length >= 5000
+            ? `5000+ fire hotspots in ${country?.name ?? "selected area"}`
+            : parsedPts.length
+              ? `${parsedPts.length} fire hotspots in ${country?.name ?? "selected area"}`
+              : `No fires detected in ${country?.name ?? "selected area"} on this day`,
         )
       } catch {
         if (!ctrl.signal.aborted) setHotspotStatus("Could not load fire points")
@@ -695,7 +730,7 @@ export default function AoiMap({
       clearTimeout(t)
       ctrl.abort()
     }
-  }, [bounds, view, day, year])
+  }, [bounds, view, day, year, country])
 
   // ---------- load country shapes once ----------
   useEffect(() => {
@@ -941,6 +976,10 @@ export default function AoiMap({
         ? candidates.filter((c) => features.some((f: any) => matchesCountry(f, c)))
         : [],
     )
+    const strokeColor = anomaly >= 2 ? "#ff3d00" : anomaly >= 1 ? "#ffb300" : "#ff7832"
+    const fillColor = anomaly >= 2 ? "#ff3d00" : anomaly >= 1 ? "#ffb300" : "transparent"
+    const fillOpacity = anomaly >= 2 ? 0.22 : anomaly >= 1 ? 0.12 : 0
+
     if (features.length) {
       shadeRef.current = L.geoJSON(
         { type: "FeatureCollection", features } as any,
@@ -948,23 +987,31 @@ export default function AoiMap({
           pane: "shadePane",
           interactive: false,
           style: {
-            color,
-            weight: 1.5,
-            fillColor: color,
-            fillOpacity: anomaly >= 2 ? 0.6 : anomaly >= 1 ? 0.5 : 0.28,
+            color: strokeColor,
+            weight: 2,
+            opacity: 0.95,
+            fillColor,
+            fillOpacity,
           },
         },
       ).addTo(map)
-      // box becomes a faint selection outline
-      rect.setStyle({ color: "#ffffff", weight: 1, dashArray: "6 6", fillOpacity: 0 })
-    } else {
-      // shapes not loaded / not matched: fall back to coloring the box
+    }
+
+    // Bounding box rectangle is ONLY visible when custom area drawing is active
+    if (customBoxVisibleRef.current) {
       rect.setStyle({
-        color,
+        color: strokeColor,
         weight: 2,
         dashArray: "",
-        fillColor: color,
-        fillOpacity: 0.3,
+        fillColor: strokeColor,
+        fillOpacity: 0.08,
+        opacity: 0.9,
+      })
+    } else {
+      rect.setStyle({
+        opacity: 0,
+        fillOpacity: 0,
+        weight: 0,
       })
     }
   }, [geoReady, included, isPreset, bounds, country, anomaly])

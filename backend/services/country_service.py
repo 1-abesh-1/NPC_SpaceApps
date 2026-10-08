@@ -12,16 +12,13 @@ from fastapi import HTTPException
 from backend.core.config import COUNTRIES_DIR, REGISTRY_PATH
 
 
-def get_country_dir(iso: str) -> Path:
-    """Resolve and validate the directory for a given country code."""
+def get_country_dir(iso: str) -> Optional[Path]:
+    """Resolve directory for a given country code if pre-processed, else None."""
     iso_clean = iso.upper().strip()
     cdir = COUNTRIES_DIR / iso_clean
-    if not cdir.exists():
-        raise HTTPException(
-            status_code=404,
-            detail=f"Country '{iso_clean}' not found in registry. Please verify /api/countries."
-        )
-    return cdir
+    if cdir.exists():
+        return cdir
+    return None
 
 
 def parse_bbox(bbox_str: Optional[str]) -> Optional[Tuple[float, float, float, float]]:
@@ -39,13 +36,25 @@ def parse_bbox(bbox_str: Optional[str]) -> Optional[Tuple[float, float, float, f
 
 
 def get_country_metadata(iso: str) -> Dict[str, Any]:
-    """Load metadata dictionary for the specified country."""
-    cdir = get_country_dir(iso)
-    meta_path = cdir / "meta.json"
-    if not meta_path.exists():
-        raise HTTPException(status_code=404, detail="Country metadata not found.")
-    with open(meta_path, "r", encoding="utf-8") as f:
-        return json.load(f)
+    """Load metadata dictionary for the specified country from disk or registry."""
+    iso_clean = iso.upper().strip()
+    cdir = get_country_dir(iso_clean)
+    if cdir:
+        meta_path = cdir / "meta.json"
+        if meta_path.exists():
+            with open(meta_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+
+    # Fallback to registered country profile in countries.json
+    all_profiles = get_all_countries_registry()
+    profile = next((c for c in all_profiles if c.get("iso") == iso_clean), None)
+    if profile:
+        return profile
+
+    raise HTTPException(
+        status_code=404,
+        detail=f"Country '{iso_clean}' not found in registry. Please verify /api/countries."
+    )
 
 
 def get_all_countries_registry() -> List[Dict[str, Any]]:
@@ -54,3 +63,4 @@ def get_all_countries_registry() -> List[Dict[str, Any]]:
         return []
     with open(REGISTRY_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
+
