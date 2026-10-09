@@ -18,6 +18,7 @@ from backend.models.schemas import (
     MonthlyOverlapItem,
     GapsInfo,
     AnalysisResponse,
+    WorldFiresResponse,
 )
 from backend.services.country_service import (
     get_country_dir,
@@ -25,6 +26,7 @@ from backend.services.country_service import (
     get_all_countries_registry,
 )
 from backend.services.analysis_service import compute_fire_analysis
+from backend.services.world_fires_service import fetch_and_cache_world_fires
 
 router = APIRouter(prefix="/api")
 
@@ -130,4 +132,27 @@ def get_analysis(
         bbox=bbox,
         year_from=year_from,
         year_to=year_to,
+    )
+
+
+# -------------------------------------------------------------------------
+# 5. Worldwide Active Fires (Server-side proxy, ranked & cached)
+# -------------------------------------------------------------------------
+
+@router.get("/world-fires", response_model=WorldFiresResponse, tags=["Fires"])
+def get_world_fires(
+    date: str = Query(..., description="Acquisition date (YYYY-MM-DD)"),
+    limit: int = Query(10000, ge=1, le=50000, description="Max top fires by FRP to return"),
+    bbox: Optional[str] = Query(None, description="Optional bounding box: west,south,east,north"),
+    sensor: Optional[str] = Query(None, description="Optional sensor override: VIIRS_SNPP or MODIS"),
+):
+    """
+    Proxies, ranks, and caches worldwide active fire detections from NASA FIRMS.
+    Returns gzip-compressed JSON with top N fires by FRP, avoiding tens of MB CSV downloads.
+    """
+    return fetch_and_cache_world_fires(
+        date_str=date,
+        limit=limit,
+        bbox=bbox,
+        sensor_override=sensor,
     )

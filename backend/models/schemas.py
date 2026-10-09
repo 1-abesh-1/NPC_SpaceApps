@@ -89,3 +89,19 @@ class TrustResponse(BaseModel):
     quiet_ratio: Optional[float]
     busy_ratio: Optional[float]
     monthly: List[MonthlyOverlapItem]
+
+
+class FirePoint(BaseModel):
+    lat: float
+    lng: float
+    frp: float
+
+
+class WorldFiresResponse(BaseModel):
+    date: str
+    source: str
+    total: int
+    count: int
+    cached: bool = False
+    points: List[FirePoint]
+    error: Optional[str] = None

@@ -10,6 +10,7 @@ frontend/dist/
 
 downloads/
 data/raw/
+data/cache/
 *.zip
 *.part
 

@@ -786,6 +786,15 @@ export default function AoiMap({
     const cacheKey = `${source}:${date}`
     const ctrl = new AbortController()
 
+    const prefetchNeighbours = (curDay: number, curYear: number) => {
+      const nextDay = curDay >= 365 ? 1 : curDay + 1
+      const prevDay = curDay <= 1 ? 365 : curDay - 1
+      setTimeout(() => {
+        fetchWorldFires(nextDay, curYear).catch(() => {})
+        fetchWorldFires(prevDay, curYear).catch(() => {})
+      }, 120)
+    }
+
     const draw = (pts: { lat: number; lng: number; frp: number }[], total: number) => {
       const renderer = hotspotRendererRef.current ?? undefined
       const group = L.layerGroup()
@@ -807,6 +816,54 @@ export default function AoiMap({
           ? `${total.toLocaleString()} fires worldwide · strongest ${pts.length.toLocaleString()} shown`
           : `${total.toLocaleString()} fires worldwide`,
       )
+      prefetchNeighbours(day, year)
+    }
+
+    const fetchWorldFires = async (doy: number, yr: number, signal?: AbortSignal) => {
+      const dObj = new Date(Date.UTC(yr, 0, doy))
+      const dIso = dObj.toISOString().slice(0, 10)
+      const aDays = (Date.now() - dObj.getTime()) / 86400000
+      if (aDays < 0) return null
+      const sens = yr < 2012 ? "MODIS" : "VIIRS_SNPP"
+      const src = `${sens}_${aDays < 60 ? "NRT" : "SP"}`
+      const cKey = `${src}:${dIso}`
+
+      const mem = worldCacheRef.current.get(cKey)
+      if (mem) return mem
+
+      // 1. Try our high-speed backend proxy (/api/world-fires)
+      try {
+        const backendUrl = `${API_BASE}/api/world-fires?date=${dIso}&limit=${MAX_WORLD_POINTS}`
+        const res = await fetch(backendUrl, { signal })
+        if (res.ok) {
+          const json = await res.json()
+          if (Array.isArray(json.points)) {
+            const data = { pts: json.points, total: json.total ?? json.points.length }
+            worldCacheRef.current.set(cKey, data)
+            if (worldCacheRef.current.size > 80) {
+              worldCacheRef.current.delete(worldCacheRef.current.keys().next().value as string)
+            }
+            return data
+          }
+        }
+      } catch (err: any) {
+        if (signal?.aborted) throw err
+      }
+
+      // 2. Client-side fallback to direct NASA FIRMS if backend is unreachable
+      if (!key) return null
+      const directUrl = `https://firms.modaps.eosdis.nasa.gov/api/area/csv/${key}/${src}/world/1/${dIso}`
+      const res = await fetch(directUrl, { signal })
+      if (!res.ok) return null
+      const text = await res.text()
+      const parsed = parseFirmsCsv(text, MAX_WORLD_POINTS)
+      if (parsed) {
+        worldCacheRef.current.set(cKey, parsed)
+        if (worldCacheRef.current.size > 80) {
+          worldCacheRef.current.delete(worldCacheRef.current.keys().next().value as string)
+        }
+      }
+      return parsed
     }
 
     const cached = worldCacheRef.current.get(cacheKey)
@@ -817,29 +874,18 @@ export default function AoiMap({
 
     const t = setTimeout(async () => {
       try {
-        setWorldStatus("Downloading world fires (processing satellite points)…")
-        const url = `https://firms.modaps.eosdis.nasa.gov/api/area/csv/${key}/${source}/world/1/${date}`
-        const res = await fetch(url, { signal: ctrl.signal })
-        const text = await res.text()
-        if (!res.ok) {
-          setWorldStatus(`FIRMS: ${text.trim().slice(0, 60) || "no response"}`)
-          return
-        }
-        const parsed = parseFirmsCsv(text, MAX_WORLD_POINTS)
-        if (!parsed) {
-          setWorldStatus(`FIRMS: ${text.trim().slice(0, 60) || "no response"}`)
-          return
-        }
-        const { pts, total } = parsed
-        const cache = worldCacheRef.current
-        cache.set(cacheKey, { pts, total })
-        if (cache.size > 50) cache.delete(cache.keys().next().value as string)
+        setWorldStatus("Retrieving satellite fire hotspots…")
+        const result = await fetchWorldFires(day, year, ctrl.signal)
         if (ctrl.signal.aborted) return
-        draw(pts, total)
+        if (!result) {
+          setWorldStatus("No fire records available for this date")
+          return
+        }
+        draw(result.pts, result.total)
       } catch {
         if (!ctrl.signal.aborted) setWorldStatus("Could not load world fires")
       }
-    }, 200) // Fast 200ms debounce: instant feel with high-performance parsing
+    }, 150)
 
     return () => {
       clearTimeout(t)
