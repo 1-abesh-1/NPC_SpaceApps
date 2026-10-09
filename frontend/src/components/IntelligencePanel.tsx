@@ -443,7 +443,7 @@ export default function IntelligencePanel({
       </section>
 
       <footer className="left-footer">
-        <span>FireCalendar, 2026</span>
+        <span>BurnSignal, 2026</span>
         <span>NASA FIRMS / DEMONSTRATION</span>
       </footer>
     </div>

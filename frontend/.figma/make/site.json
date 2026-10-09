@@ -1,8 +1,8 @@
 {
-  "title": "FireCalendar — Planetary Burning Activity",
+  "title": "BurnSignal - Wildfire Intelligence & Early Warning",
   "description": "A harmonized satellite fire climatology and early warning demonstration for the NASA Space Apps Challenge 2026.",
   "icons": {
-    "icon": "/favicon.svg?v=2"
+    "icon": "/BurnSignal2.png?v=2"
   },
   "robots": {
     "index": false

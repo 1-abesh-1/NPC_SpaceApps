@@ -11,12 +11,13 @@ export default function CommandBar({ theme, onTheme }: Props) {
   return (
     <header className="strata-header">
       <div className="strata-brand">
-        <span className="brand-mark" aria-hidden="true">
-          <i />
-          <i />
-          <i />
-        </span>
-        <span>FireCalendar</span>
+        <img
+          alt="BurnSignal logo"
+          className="brand-logo-img"
+          src="/BurnSignal2.png"
+          style={{ width: "24px", height: "24px", objectFit: "contain", borderRadius: "4px" }}
+        />
+        <span>BurnSignal</span>
         <small>Satellite fire climatology</small>
       </div>
       <div className="header-meta">
